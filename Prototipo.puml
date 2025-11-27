@@ -1,0 +1,157 @@
+@startuml Simulador_ALU_Arquitectura
+title: Arquitectura del Simulador Digital (ALU Detallada)
+
+' =================================================================
+' 1. Componentes de Bajo Nivel (Datos y Lógica Fundamental)
+' =================================================================
+package "Componentes Basicos" {
+class Bit {
+- valor : int (0 o 1)
+--
++ set_value(v)
++ get_value() : int
+}
+
+class Bus {
+    - lineas : Bit[16]
+    - ancho : int (16)
+    --
+    + get_valor_decimal() : int
+    + set_valor_binario(valor : int)
+}
+
+abstract class PuertaLogica {
+    - Entrada_A : Bit
+    - Entrada_B : Bit
+    - Salida : Bit
+    --
+    + Calcular()
+}
+
+
+}
+
+' Clases concretas de puertas lógicas
+PuertaLogica <|-- PuertaAND
+PuertaLogica <|-- PuertaOR
+PuertaLogica <|-- PuertaXOR
+PuertaLogica <|-- PuertaNOT
+
+' =================================================================
+' 2. Estructura de la Unidad Aritmética
+' =================================================================
+class FullAdder {
+- Puertas : PuertaLogica[]
+- Entrada_A, Entrada_B, C_in : Bit
+- Suma, C_out : Bit
+--
++ Calcular()
+}
+
+' Relación de composición: Un FullAdder usa Puertas Lógicas
+FullAdder "1" *-- "3..5" PuertaLogica : usa
+
+class UnidadAritmetica {
+- FAs : FullAdder[16]
+- Inversores_B : PuertaNOT[16]
+- Control_SUB : Bit
+--
++ Calcular(Bus A, Bus B, Bit C_in) : {Bus, Bit}
+}
+
+' Relación de composición: La UnidadAritmetica contiene los Full Adders
+UnidadAritmetica "1" *-- "16" FullAdder : contiene
+
+' =================================================================
+' 3. Estructura de la Unidad Lógica y Desplazamiento
+' =================================================================
+class UnidadDesplazamiento {
+- Entrada : Bus
+- Salida : Bus
+--
++ ShiftLeftLogical()
+' + ShiftRightLogical()
+}
+
+class UnidadLogica {
+- CircuitosAND : PuertaAND[16]
+- CircuitosOR : PuertaOR[16]
+- CircuitosXOR : PuertaXOR[16]
+- CircuitoSLL : UnidadDesplazamiento
+--
++ Calcular(Bus A, Bus B) : Bus
+}
+
+' Relación de composición: La UnidadLogica contiene los circuitos
+UnidadLogica "1" *-- "16" PuertaAND : contiene
+UnidadLogica "1" *-- "1" UnidadDesplazamiento : contiene
+
+' =================================================================
+' 4. Clase Principal ALU (Orquestador)
+' =================================================================
+class Multiplexor {
+- Entradas : Bus[]
+- Linea_Seleccion : Bus
+- Salida : Bus
+--
++ SeleccionarYPasar()
+}
+
+class ALU {
+' Conexiones de la CPU
+- Bus_A : Bus
+- Bus_B : Bus
+- Bus_R : Bus
+- flag_C : Bit
+
+' Componentes internos
+- UnidadAritmetica : UnidadAritmetica
+- UnidadLogica : UnidadLogica
+- Multiplexor : Multiplexor
+--
++ Ejecutar(opcode : Bus) : {Bus, Bit}
+- ActualizarBanderas(resultado : Bus)
+
+
+}
+
+' Relaciones de Composición de la ALU
+ALU "1" *-- "1" UnidadAritmetica : contiene
+ALU "1" *-- "1" UnidadLogica : contiene
+ALU "1" *-- "1" Multiplexor : selecciona
+ALU "1" *-- "3" Bus : tiene_buses
+
+' =================================================================
+' 5. Módulos Principales del Computador (Según tu Plan)
+' =================================================================
+class CPU {
+' Registros (Ahora son Buses/Bits)
+- PC : Bus
+- IR : Bus
+- AC : Bus
+- FLAG_Z : Bit
+- is_running : bool
+--
++ alu : ALU
+- Fetch()
+- Decode()
+- Execute()
+}
+
+class RAM {
+- Memory : Bus[]
+- Current_access : Bus
+--
++ Read(addres : Bus) : Bus
++ Write(addres : Bus, value : Bus)
+- Load()
+}
+
+' Relaciones entre módulos principales
+' CPU usa ALU (agregación/dependencia)
+CPU --> ALU : usa_logica
+
+' CPU depende de RAM
+CPU -right-> RAM : lee_escribe
+
+@enduml
