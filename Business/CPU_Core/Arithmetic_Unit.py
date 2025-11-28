@@ -1,5 +1,5 @@
-from Basic_Components.Bus import Bus
-from Basic_Components.Bit import Bit
+from Business.Basic_Components.Bus import Bus
+from Business.Basic_Components.Bit import Bit  
 from Business.CPU_Core.Full_Adder import Full_Adder
 from Business.Logic_Gates.NOT_Gate import NOT_Gate
 from typing import List

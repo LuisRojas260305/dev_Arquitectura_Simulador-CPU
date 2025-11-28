@@ -1,5 +1,5 @@
-from Business.Basic_Components import Logic_Gate, Bit
-
+from Business.Basic_Components.Logic_Gate import Logic_Gate
+from Business.Basic_Components.Bit import Bit
 class AND_Gate(Logic_Gate):
     def __init__(self):
         super().__init__(n_inputs=2)
