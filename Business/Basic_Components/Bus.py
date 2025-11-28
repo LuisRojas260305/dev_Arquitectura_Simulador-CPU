@@ -71,6 +71,22 @@ class Bus:
             return {i: self.__lines[i].get_value() for i in range(self.width)}
         else:
             return {i: self.__lines[i].get_value() for i in range(self.width - 1, -1, -1)}
+        
+    # Devuelve el valor de una linea
+    def get_Line_bit(self, index: int) -> Bit:
+        if index < 0 or index >= self.width:
+            raise ValueError(f"El indice debe estar dentro del rango [0, {self.width - 1}]")
+        
+        return self.__lines[index]
+    
+    def set_Line_bit(self, index: int, value: Bit):
+        if index < 0 or index >= self.width:
+            raise ValueError(f"El indice debe estar dentro del rango [0, {self.width - 1}]")
+        
+        if not isinstance(value, Bit):
+            raise TypeError(f"El valor debe ser una instancia de la clase Bit, no {type(value).__name__}")
+        
+        self.__lines[index] = value
     
     def __str__(self):
         return f"Bus{self.width}({self.get_Hexadecimal_value()})"
