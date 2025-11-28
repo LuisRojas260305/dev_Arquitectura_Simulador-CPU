@@ -1,9 +1,9 @@
 from Business.Basic_Components import Logic_Gate, Bit
 
-class AND_Gate(Logic_Gate):
+class XOR_Gate(Logic_Gate):
     def __init__(self):
         super().__init__(n_inputs=2)
-        self._set_output(Bit(0)) 
+        self._set_output(Bit(0))  
     
     def calculate(self):
         inputs = self._get_inputs()  
@@ -11,6 +11,7 @@ class AND_Gate(Logic_Gate):
             value1 = inputs[0].get_value()
             value2 = inputs[1].get_value()
             
-            result = 1 if value1 == 1 and value2 == 1 else 0
-            self._get_output().set_value(result) 
+            result = 1 if value1 != value2 else 0
+            self._get_output().set_value(result)  
+        
         return self.get_output() 
