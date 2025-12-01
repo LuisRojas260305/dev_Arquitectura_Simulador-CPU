@@ -1,0 +1,116 @@
+from Business.Basic_Components.Bus import Bus
+from Business.Basic_Components.Bit import Bit
+from .MUX2to1 import MUX2to1
+
+class LSL:
+    
+    # Constructor
+    def __init__(self, Input_A: Bus = None, Input_B: Bus = None):
+        # MUX Stages
+        self.__1bit__stage = [MUX2to1() for _ in range(16)]
+        self.__2bit__stage = [MUX2to1() for _ in range(16)]
+        self.__4bit__stage = [MUX2to1() for _ in range(16)]
+        self.__8bit__stage = [MUX2to1() for _ in range(16)]
+
+        # Inputs 
+        self.__Input_A = Input_A if Input_A else Bus(16)
+        self.__Input_B = Input_B if Input_B else Bus(16)
+
+        # Stages Storage
+        self.__Stage_0 = None
+        self.__Stage_1 = None
+        self.__Stage_2 = None
+        self.__Stage_3 = None
+
+    # --- Setters y Getters ---
+    def set_Input_A(self, input_bus: Bus):
+        self.__Input_A = input_bus
+
+    def set_Input_B(self, shift_amount_bus: Bus):
+        self.__Input_B = shift_amount_bus
+
+    def get_Input_A(self) -> Bus:
+        return self.__Input_A
+
+    def get_Input_B(self) -> Bus:
+        return self.__Input_B
+
+    # --- Metodos Internos ---
+    def __Calculate_Stage_0(self, input: Bus, S_in: Bit) -> Bus:
+        for i in range(16):
+            self.__1bit__stage[i].set_Input_A(input.get_Line_bit(i))
+            self.__1bit__stage[i].set_S(S_in)
+            
+            if i >= 15: # LSL: Relleno en LSB (Indice alto)
+                self.__1bit__stage[i].set_Input_B(Bit(0))
+            else:
+                self.__1bit__stage[i].set_Input_B(input.get_Line_bit(i + 1))
+        
+        for i in range(16): self.__1bit__stage[i].Calculate()
+        
+        Output = Bus(16)
+        for i in range(16): Output.set_Line_bit(i, self.__1bit__stage[i].get_Output())
+        return Output
+
+    def __Calculate_Stage_1(self, input: Bus, S_in: Bit) -> Bus:
+        for i in range(16):
+            self.__2bit__stage[i].set_Input_A(input.get_Line_bit(i))
+            self.__2bit__stage[i].set_S(S_in)
+
+            if i >= 14:
+                self.__2bit__stage[i].set_Input_B(Bit(0))
+            else:
+                self.__2bit__stage[i].set_Input_B(input.get_Line_bit(i + 2))
+        
+        for i in range(16): self.__2bit__stage[i].Calculate()
+        
+        Output = Bus(16)
+        for i in range(16): Output.set_Line_bit(i, self.__2bit__stage[i].get_Output())
+        return Output
+    
+    def __Calculate_Stage_2(self, input: Bus, S_in: Bit) -> Bus:
+        for i in range(16):
+            self.__4bit__stage[i].set_Input_A(input.get_Line_bit(i))
+            self.__4bit__stage[i].set_S(S_in)
+
+            if i >= 12:
+                self.__4bit__stage[i].set_Input_B(Bit(0))
+            else:
+                self.__4bit__stage[i].set_Input_B(input.get_Line_bit(i + 4))
+        
+        for i in range(16): self.__4bit__stage[i].Calculate()
+        
+        Output = Bus(16)
+        for i in range(16): Output.set_Line_bit(i, self.__4bit__stage[i].get_Output())
+        return Output
+
+    def __Calculate_Stage_3(self, input: Bus, S_in: Bit) -> Bus:
+        for i in range(16):
+            self.__8bit__stage[i].set_Input_A(input.get_Line_bit(i))
+            self.__8bit__stage[i].set_S(S_in)
+
+            if i >= 8:
+                self.__8bit__stage[i].set_Input_B(Bit(0))
+            else:
+                self.__8bit__stage[i].set_Input_B(input.get_Line_bit(i + 8))
+        
+        for i in range(16): self.__8bit__stage[i].Calculate()
+        
+        Output = Bus(16)
+        for i in range(16): Output.set_Line_bit(i, self.__8bit__stage[i].get_Output())
+        return Output
+    
+    def Calculate(self) -> Bus:
+        # Señales de control (Bits 12-15 del bus de control)
+        S0 = self.__Input_B.get_Line_bit(15)
+        S1 = self.__Input_B.get_Line_bit(14)
+        S2 = self.__Input_B.get_Line_bit(13)
+        S3 = self.__Input_B.get_Line_bit(12)
+
+        # Calcular Etapas en cascada
+        self.__Stage_0 = self.__Calculate_Stage_0(self.__Input_A, S0)
+        self.__Stage_1 = self.__Calculate_Stage_1(self.__Stage_0, S1)
+        self.__Stage_2 = self.__Calculate_Stage_2(self.__Stage_1, S2)
+        self.__Stage_3 = self.__Calculate_Stage_3(self.__Stage_2, S3)
+        
+        return self.__Stage_3

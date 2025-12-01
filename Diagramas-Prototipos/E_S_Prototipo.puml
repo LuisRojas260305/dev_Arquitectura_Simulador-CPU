@@ -1,0 +1,85 @@
+@startuml Simulador_ALU_Arquitectura_v2
+title: Arquitectura del Simulador Digital (Detalle de E/S)
+
+!pragma layout smetana
+
+' Omitimos el detalle de la ALU y Registros para enfocarnos en E/S
+package "Componentes CPU"{
+class UnidadControl {
+- Instruccion : Bus
+--
++ Generar_Senales()
+}
+package "Banco de Registros" {
+class RegistrosInternos {
+- AC : Bus
+}
+}
+}
+
+class CPU {
+- BancoReg : RegistrosInternos
+- UC : UnidadControl
+- Display : SegmentDisplay
+--
++ Ciclo_OUT()
+}
+
+' =================================================================
+' 4. Dispositivos E/S Detallados
+' =================================================================
+package "Dispositivos E/S" {
+class TecladoASCII {
+- Buffer_Char : char
+--
++ ConvertirA_Bus() : Bus
+}
+
+package "Subsistema de Visualización" {
+    note "Convierte 16 bits (0-65535) en 5 dígitos decimales." as N1
+    class DecimalToBCDConverter {
+        - Bus_Entrada : Bus (16 bits)
+        - Salida_BCD : int[5]
+        --
+        + Convertir(valor : Bus) : int[5] 
+    }
+    N1 .right. DecimalToBCDConverter
+
+    note "Simula el decodificador 7447, mapeando un dígito (0-9) a 7 segmentos (a-g)." as N2
+    class Driver7Segmentos {
+        - Entrada_BCD : int (0-9)
+        - Salida_Segmentos : bool[7] (a, b, c, d, e, f, g)
+        --
+        + Decodificar(digito : int) : bool[7]
+        - Mapeo_Logico : Dict<int, tuple>
+    }
+    N2 .right. Driver7Segmentos
+    
+    class SegmentDisplay {
+        - Drivers : Driver7Segmentos[5]
+        --
+        + Actualizar(valores_BCD : int[5])
+        + Renderizar_Pygame(superficie)
+    }
+}
+
+
+}
+
+' =================================================================
+' Relaciones y Flujo de Datos
+' =================================================================
+
+' Flujo de datos del AC al Display
+RegistrosInternos --> DecimalToBCDConverter : valor_AC (16 bits)
+
+' El conversor separa el valor en 5 dígitos, uno para cada driver
+DecimalToBCDConverter "1" -down-> "5" Driver7Segmentos : digito_decimal
+
+' El SegmentDisplay agrupa los 5 drivers
+SegmentDisplay "1" *-- "5" Driver7Segmentos : contiene
+
+' La CPU usa el subsistema
+CPU -down- SegmentDisplay : activa_OUT
+
+@enduml

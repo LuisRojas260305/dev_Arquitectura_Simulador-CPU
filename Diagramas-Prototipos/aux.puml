@@ -1,0 +1,64 @@
+@startuml Arquitectura_Unidad_Desplazamiento
+
+title: Unidad de Desplazamiento (Shift Unit) - Modelo Estructural
+
+' Elementos ya existentes en el proyecto del usuario
+class Bit {
+- __value : int (0|1)
+--
++ set_value(value : int)
++ get_value() : int
+}
+class Bus {
+- __lines : List<Bit>
+- width : int
+--
++ set_Binary_value(value : int)
++ get_Line_bit(index : int) : Bit
+}
+
+' 1. Componente Lógico Base
+class MUX2to1 {
+--
++ calculate(Input_0: int, Input_1: int, Select: int) : int
+}
+note top of MUX2to1
+Un MUX 2 a 1 simula la selección
+entre dos posibles entradas (desplazado o no desplazado)
+basado en el bit de control.
+end note
+
+' 2. Estructura de Hardware Combinacional
+class BarrelShifter16Bit {
+- __stages : List<List<MUX2to1>> (4 etapas * 16 MUXes)
+- __width : int = 16
+--
+- _shift_stage(Input: Bus, Factor: int, Control: int, SignExt: bool) : Bus
++ calculate(Input: Bus, Shift_Amount: int, mode: int) : Tuple<Bus, int>
+}
+note right of BarrelShifter16Bit
+Simula la red de multiplexores en 4 etapas
+(1, 2, 4, 8 bits de desplazamiento).
+El cálculo es combinacional (un solo paso).
+end note
+
+' 3. Interfaz de la ALU
+class Shift_Unit {
++ SLL : int = 0
++ SRA : int = 1
+- __shifter : BarrelShifter16Bit
+- __width : int = 16
+--
++ Calculate(Shift_Amount: int, Input: Bus, Mode: int) : Tuple<Bus, Bit>
+}
+note bottom of Shift_Unit
+Esta es la clase que la Unidad de Control
+de la CPU llama para ejecutar el cálculo.
+end note
+
+' Relaciones
+Bus <.. Bit : contiene (16)
+Shift_Unit o-- BarrelShifter16Bit : usa
+BarrelShifter16Bit *-- MUX2to1 : contiene (64)
+
+@enduml

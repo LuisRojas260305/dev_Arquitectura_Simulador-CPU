@@ -1,7 +1,7 @@
 from Business.Basic_Components.Bit import Bit
-from Business.Logic_Gates.XOR_Gate import XOR_Gate
-from Business.Logic_Gates.AND_Gate import AND_Gate
-from Business.Logic_Gates.OR_Gate import OR_Gate
+from Business.Basic_Components.Logic_Gates.XOR_Gate import XOR_Gate
+from Business.Basic_Components.Logic_Gates.AND_Gate import AND_Gate
+from Business.Basic_Components.Logic_Gates.OR_Gate import OR_Gate
 
 class Full_Adder:
     # Constructor
@@ -25,6 +25,9 @@ class Full_Adder:
     # Metodos
     def Calculate(self):
         
+        # Output = A⊕B⊕Cin​
+        # C_out​ = (A⋅B)+((A⊕B)⋅Cin​)
+
         # Primer XOR
         self.__Xor_A.connect_input(self.__Input_A, 0)
         self.__Xor_A.connect_input(self.__Input_B, 1)
