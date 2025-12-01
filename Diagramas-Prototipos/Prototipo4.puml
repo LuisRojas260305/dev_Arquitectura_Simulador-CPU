@@ -1,0 +1,197 @@
+@startuml Simulador_ALU_Arquitectura
+title: Arquitectura del Simulador Digital (ALU Detallada - v2)
+
+' =================================================================
+' 2. Clase Principal ALU (Orquestador)
+' =================================================================
+package "Unidad Aritmetico/Logica" {
+    class Multiplexor {
+        - Entradas : Bus[] (UA, UL, UD)
+        - Linea_Seleccion : Bus (ALUop)
+        - Salida : Bus
+        --
+        + SeleccionarYPasar()
+    }
+
+    class ALU {
+        ' Conexiones de la CPU
+        - Bus_A : Bus
+        - Bus_B : Bus
+        - Bus_R : Bus
+        - flag_C : Bit
+        - ALUop : Bit[2]
+        - ModoFunción : Bit[2]
+
+        ' Componentes internos
+        - UnidadAritmetica : UnidadAritmetica
+        - UnidadLogica : UnidadLogica
+        - UnidadDesplazamiento : UnidadDesplazamiento
+        - Multiplexor : Multiplexor
+        --
+        + Ejecutar() : {Bus, Bit}
+        - ActualizarBanderas(resultado : Bus)
+    }
+
+    package "Unidad de Desplazamiento" {
+        class UnidadDesplazamiento {
+            - LSL : LSL
+            - LSR : LSR
+            - ASR : ASR
+            - ROL : ROL
+            - ROR : ROR
+            - MUX_Interno : MUX_nx1 (Selecciona ROR, ROL, etc.)
+            --
+            + Calcular(ModoFuncion) : Bus
+        }
+        class LSL
+        class LSR
+        class ASR
+        class ROL
+        class ROR
+    }
+
+    class UnidadLogica {
+        - CircuitosAND : PuertaAND[16]
+        - CircuitosOR : PuertaOR[16]
+        - CircuitosXOR : PuertaXOR[16]
+        --
+        + Calcular(Bus A, Bus B, ModoFuncion) : Bus
+    }
+
+    class FullAdder {
+        - Puertas : PuertaLogica[]
+        - Entrada_A, Entrada_B, C_in : Bit
+        - Suma, C_out : Bit
+        --
+        + Calcular()
+    }
+
+    class UnidadAritmetica {
+        - FAs : FullAdder[16]
+        - Inversores_B : PuertaNOT[16]
+        - Control_SUB : Bit
+        --
+        + Calcular(Bus A, Bus B, Bit C_in) : {Bus, Bit}
+    }
+}
+
+' Relación de composición dentro de la Unidad de Desplazamiento
+UnidadDesplazamiento "1" *-- "1" LSL : usa
+UnidadDesplazamiento "1" *-- "1" LSR : usa
+UnidadDesplazamiento "1" *-- "1" ASR : usa
+UnidadDesplazamiento "1" *-- "1" ROL : usa
+UnidadDesplazamiento "1" *-- "1" ROR : usa
+
+' Relación de composición: La UnidadAritmetica contiene los Full Adders
+UnidadAritmetica "1" *-- "16" FullAdder : contiene
+
+' Relaciones de Composición de la ALU
+ALU "1" *-- "1" UnidadAritmetica : contiene
+ALU "1" *-- "1" UnidadLogica : contiene
+ALU "1" *-- "1" Multiplexor : selecciona
+ALU "1" *-- "1" UnidadDesplazamiento : contiene
+
+' =================================================================
+' 3. Módulos Principales del Computador
+' =================================================================
+package "Componentes CPU"{
+    class UnidadControl {
+        - Instruccion : Bus
+        --
+        + Decodificar(opcode : Bus)
+        + Generar_Senales() : SenalesControl
+        + Secuenciar_Ciclo()
+    }
+    package "Banco de Registros" {
+        class RegistrosInternos {
+            - R0..R7 : RegistroGenerico[8]
+            - AC : RegistroGenerico
+            - PC : RegistroGenerico
+            - IR : RegistroGenerico
+            - Banderas : RegistroEstado
+        }
+
+        class RegistroEstado {
+            - FLAG_Z : Bit
+            - FLAG_C : Bit
+            - FLAG_N : Bit
+        }
+    }
+}
+
+class CPU {
+    - BancoReg : Registros
+    - UC : UnidadDeControl
+    - alu : ALU
+    --
+    + Iniciar()
+    - Fetch()
+    - Decode()
+    - Execute()
+    - WriteBack()
+}
+
+class RAM {
+- Memory : Bus[]
+- Current_access : Bus
+--
++ Read(addres : Bus) : Bus
++ Write(addres : Bus, value : Bus)
+- Load()
+}
+
+' La CPU contiene e interactúa con el Banco de Registros completo
+CPU "1" *-left- "1" "Banco de Registros" : usa_almacenamiento 
+
+' La CPU utiliza la Lógica Aritmética
+CPU "1" *-down- "1" "Unidad Aritmetico/Logica" : usa_funcionalidad
+
+' La CPU contiene la Unidad de Control
+CPU "1" *-left- "1" UnidadControl : orquesta
+
+' CPU depende de RAM
+CPU -right-> RAM : lee_escribe
+
+' =================================================================
+' 1. Componentes de Bajo Nivel (Datos y Lógica Fundamental)
+' =================================================================
+package "Componentes Basicos" {
+    class Bit {
+        - valor : int (0 o 1)
+        --
+        + set_value(v)
+        + get_value() : int
+    }
+
+    class Bus {
+        - lineas : Bit[16]
+        - ancho : int (16)
+        --
+        + get_valor_decimal() : int
+        + set_valor_binario(valor : int)
+    }
+
+    abstract class PuertaLogica {
+        - Entrada_A : Bit
+        - Entrada_B : Bit
+        - Salida : Bit
+        --
+        + Calcular()
+    }
+
+    class RegistroGenerico {
+        - Valor : Bus
+        --
+        + Cargar(Bus)
+        + Leer() : Bus
+    }
+
+    ' Clases concretas de puertas lógicas
+    PuertaLogica <|-right- PuertaAND
+    PuertaLogica <|-- PuertaOR
+    PuertaLogica <|-- PuertaXOR
+    PuertaLogica <|-left- PuertaNOT
+
+}
+
+@enduml

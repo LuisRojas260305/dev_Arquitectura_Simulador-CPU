@@ -1,35 +1,46 @@
 from Business.Basic_Components.Bus import Bus
 from Business.Basic_Components.Bit import Bit  
-from Business.CPU_Core.Full_Adder import Full_Adder
-from Business.Logic_Gates.NOT_Gate import NOT_Gate
+from Business.CPU_Core.Arithmetic_Logical_Unit.Arithmetic_Unit.Full_Adder import Full_Adder
+from Business.Basic_Components.Logic_Gates.XOR_Gate import XOR_Gate
 from typing import List
 
 class Arithmetic_Unit:
+    
     # Constructor
     def __init__(self):
         # Full Adders
         self.__FAs: List[Full_Adder] = [Full_Adder() for _ in range(16)]
 
         # Inversiores
-        self.__Inverters: List[NOT_Gate] = [NOT_Gate() for _ in range(16)]
+        self.__Inverters: List[XOR_Gate] = [XOR_Gate() for _ in range(16)]
 
         # Control Sub
         self.__Control_SUB = None
     
-    def Inverter(self, Input_B: Bus) -> Bus:
+    def Inverter(self, Input_B: Bus, Operation_Mode: Bus) -> Bus:
         
-        width = len(Input_B) 
+        if not isinstance(Operation_Mode, Bus):
+            raise TypeError("Operation_Mode debe ser una instancia de la clase Bus.")
+        
+        if Operation_Mode.width != 2:
+            raise ValueError(f"Operation_Mode debe ser un Bus de 2 bits. Ancho actual: {Operation_Mode.width}")
+    
+        width = len(Input_B)
+        SUB = Operation_Mode.get_Line_bit(1)
+
         result = Bus(width)
 
         for i in range(width):
             
             self.__Inverters[i].connect_input(Input_B.get_Line_bit(i), 0)
+            self.__Inverters[i].connect_input(SUB, 1)
 
             output_bit = self.__Inverters[i].calculate() 
             
             result.set_Line_bit(i, output_bit) 
 
         return result
+    
     def Calculate(self, Input_A: Bus, Input_B: Bus, C_in: Bit) -> Bus:
         
         if not isinstance (C_in, Bit):
