@@ -1,33 +1,30 @@
-from Business.Basic_Components.Logic_Gates.AND_Gate import AND_Gate
+# Business/CPU_Core/Arithmetic_Logical_Unit/Shift_Unit/MUX8to1.py (modificado)
+from Business.Basic_Components.Logic_Gates.AND_Gate_4 import AND_Gate_4
 from Business.Basic_Components.Logic_Gates.NOT_Gate import NOT_Gate
-from Business.Basic_Components.Logic_Gates.OR_Gate import OR_Gate
+from Business.Basic_Components.Logic_Gates.OR_Gate_8 import OR_Gate_8
 from Business.Basic_Components.Bit import Bit
 from Business.Basic_Components.Bus import Bus
 from typing import List
 
-class MUX8to1_1Bit:
-    """
-    Simula un Multiplexor 8x1 (de un solo bit) utilizando compuertas lógicas.
-    Asume que AND_Gate y OR_Gate pueden manejar 4 y 8 entradas respectivamente.
-    """
+class MUX8to1:
     
     # Constructor
     def __init__(self):
         
         # Inputs: Input se asume que es un Bus de 8 Bits (D0 a D7)
-        self.__Input = Bus(8) # Corregido para ser un bus de 8 bits para D0-D7
+        self.__Input = Bus(8)
         self.__S: List[Bit] = [Bit() for _ in range(3)] # [S0, S1, S2]
 
-        # Compuertas NOT (Corregido para 3 NOT)
+        # Compuertas NOT
         self.__Not_S0 = NOT_Gate()
         self.__Not_S1 = NOT_Gate()
         self.__Not_S2 = NOT_Gate()
 
         # Compuertas AND (8 Minterms, cada una con 4 entradas)
-        self.__And_Gates = [AND_Gate() for _ in range(8)]
+        self.__And_Gates = [AND_Gate_4() for _ in range(8)]
 
-        # Compuerta OR (Corregido: Añadida la compuerta OR de 8 entradas)
-        self.__Or_Gate = OR_Gate() 
+        # Compuerta OR de 8 entradas
+        self.__Or_Gate = OR_Gate_8()
         
         # Output
         self.__Output = Bit()
@@ -37,7 +34,7 @@ class MUX8to1_1Bit:
         """Establece las 8 entradas de datos (D0-D7)."""
         if input_bus.width < 8:
             raise ValueError("El bus de entrada debe tener al menos 8 bits.")
-        self.__Input = input_bus # Asume que D0=bit 0, D7=bit 7
+        self.__Input = input_bus
 
     def set_Control_Inputs(self, S_bus: Bus):
         """Establece las 3 líneas de selección (S0-S2)."""
@@ -57,8 +54,8 @@ class MUX8to1_1Bit:
 
         # 1. Compuertas NOT (Bits de control negados)
         self.__Not_S0.connect_input(S0, 0)
-        self.__Not_S1.connect_input(S1, 0) # Corregido: Índice 0
-        self.__Not_S2.connect_input(S2, 0) # Corregido: Índice 0
+        self.__Not_S1.connect_input(S1, 0)
+        self.__Not_S2.connect_input(S2, 0)
 
         self.__Not_S0.calculate()
         self.__Not_S1.calculate()

@@ -25,16 +25,15 @@ class LSR:
     # --- Setters y Getters ---
     def set_Input_A(self, input_bus: Bus):
         self.__Input_A = input_bus
-
     def set_Input_B(self, shift_amount_bus: Bus):
         self.__Input_B = shift_amount_bus
-    
     def get_Input_A(self) -> Bus:
         return self.__Input_A
-
     def get_Input_B(self) -> Bus:
         return self.__Input_B
-
+    def get_Output(self) -> Bus:
+        return self.__Stage_3
+    
     # --- Metodos Internos ---
     def __Calculate_Stage_0(self, input: Bus, S_in: Bit) -> Bus:
         for i in range(16):

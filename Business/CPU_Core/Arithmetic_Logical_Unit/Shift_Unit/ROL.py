@@ -19,7 +19,8 @@ class ROL:
     def set_Input_B(self, shift_amount_bus: Bus): self.__Input_B = shift_amount_bus
     def get_Input_A(self) -> Bus: return self.__Input_A
     def get_Input_B(self) -> Bus: return self.__Input_B
-
+    def get_Output(self) -> Bus: return self.__Stage_3
+    
     def __Calculate_Stage_0(self, input: Bus, S_in: Bit) -> Bus:
         K = 1
         for i in range(16):

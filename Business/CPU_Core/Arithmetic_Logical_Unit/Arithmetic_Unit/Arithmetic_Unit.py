@@ -1,65 +1,86 @@
 from Business.Basic_Components.Bus import Bus
 from Business.Basic_Components.Bit import Bit  
-from Business.CPU_Core.Arithmetic_Logical_Unit.Arithmetic_Unit.Full_Adder import Full_Adder
+from .Full_Adder import Full_Adder
 from Business.Basic_Components.Logic_Gates.XOR_Gate import XOR_Gate
-from typing import List
+from typing import Tuple
 
 class Arithmetic_Unit:
     
-    # Constructor
     def __init__(self):
-        # Full Adders
-        self.__FAs: List[Full_Adder] = [Full_Adder() for _ in range(16)]
-
-        # Inversiores
-        self.__Inverters: List[XOR_Gate] = [XOR_Gate() for _ in range(16)]
-
-        # Control Sub
-        self.__Control_SUB = None
-    
-    def Inverter(self, Input_B: Bus, Operation_Mode: Bus) -> Bus:
+        # Full Adders (16, uno por cada bit)
+        self.__FAs = [Full_Adder() for _ in range(16)]
         
-        if not isinstance(Operation_Mode, Bus):
-            raise TypeError("Operation_Mode debe ser una instancia de la clase Bus.")
+        # Inversores (XOR como inversor controlado)
+        self.__Inverters = [XOR_Gate() for _ in range(16)]
         
-        if Operation_Mode.width != 2:
-            raise ValueError(f"Operation_Mode debe ser un Bus de 2 bits. Ancho actual: {Operation_Mode.width}")
+        # Control Sub (para inversión en resta)
+        self.__Control_SUB = Bit(0)
     
-        width = len(Input_B)
-        SUB = Operation_Mode.get_Line_bit(1)
-
+    def __invert_bus(self, input_bus: Bus, invert_control: Bit) -> Bus:
+        """
+        Invierte el bus si invert_control = 1 (para operación de resta).
+        Usa XOR: B XOR 0 = B, B XOR 1 = NOT B
+        """
+        width = len(input_bus)
         result = Bus(width)
-
+        
         for i in range(width):
-            
-            self.__Inverters[i].connect_input(Input_B.get_Line_bit(i), 0)
-            self.__Inverters[i].connect_input(SUB, 1)
-
-            output_bit = self.__Inverters[i].calculate() 
-            
-            result.set_Line_bit(i, output_bit) 
-
+            self.__Inverters[i].connect_input(input_bus.get_Line_bit(i), 0)
+            self.__Inverters[i].connect_input(invert_control, 1)
+            self.__Inverters[i].calculate()
+            result.set_Line_bit(i, self.__Inverters[i].get_output())
+        
         return result
     
-    def Calculate(self, Input_A: Bus, Input_B: Bus, C_in: Bit) -> Bus:
+    def __add(self, input_a: Bus, input_b: Bus, c_in: Bit) -> Tuple[Bus, Bit]:
+        """Suma dos buses con acarreo inicial."""
+        width = len(input_a)
+        result = Bus(width)
         
-        if not isinstance (C_in, Bit):
-            raise TypeError(f"El C_in debe ser una instancia de la clase Bit, no {type(C_in).__name__}")
-
-        if not isinstance (Input_A, Bus) or not isinstance (Input_B, Bus):
-            raise TypeError("Los input deben ser de la clase Bus")
-        Output = Bus(16)
-
-        if C_in.get_value == 0:
-            # Suma los inpunts (A + B + C_in = 0)
-            Output, C_out = self.ADD(Input_A, Input_B, C_in)
-            return Output, C_out
-        else:
-            # Resta los inputs (A - (~B) + C_in = 1)
-            Output, C_out = self.ADD(Input_A, self.Inverter(Input_B), C_in)
-            return Output, C_out
+        carry = c_in
         
-    def ADD (self, Input_A: Bus, Input_B: Bus, C_in: Bit) -> (Bus, Bit):
+        # Sumar de LSB a MSB (de 15 a 0 en tu representación Big-Endian)
+        for i in range(width - 1, -1, -1):
+            # Configurar el Full Adder
+            self.__FAs[i].set_Input_A(input_a.get_Line_bit(i))
+            self.__FAs[i].set_Input_B(input_b.get_Line_bit(i))
+            self.__FAs[i].set_C_in(carry)
+            
+            # Calcular
+            self.__FAs[i].Calculate()
+            
+            # Obtener resultados
+            result.set_Line_bit(i, self.__FAs[i].get_Output())
+            carry = self.__FAs[i].get_C_out()
+        
+        return result, carry
+    
+    def calculate(self, input_a: Bus, input_b: Bus, c_in: Bit) -> Tuple[Bus, Bit]:
+        """
+        Ejecuta operación aritmética según c_in:
+        - c_in = 0: ADD (A + B)
+        - c_in = 1: SUB (A - B) = A + NOT B + 1
+        """
+        if not isinstance(c_in, Bit):
+            raise TypeError(f"c_in debe ser Bit, no {type(c_in)}")
+        
+        if not isinstance(input_a, Bus) or not isinstance(input_b, Bus):
+            raise TypeError("Los inputs deben ser Bus")
+        
+        if len(input_a) != 16 or len(input_b) != 16:
+            raise ValueError("Los buses deben ser de 16 bits")
+        
+        if c_in.get_value() == 0:  # ADD
+            return self.__add(input_a, input_b, Bit(0))
+        else:  # SUB (A - B)
+            # Invertir B y sumar 1 (c_in = 1)
+            inverted_b = self.__invert_bus(input_b, Bit(1))
+            return self.__add(input_a, inverted_b, Bit(1))
+    
+    def get_result(self) -> Bus:
+        """Método auxiliar para compatibilidad."""
+        # Nota: Este método sería útil si guardas el resultado como atributo
+        pass
         
         width = len(Input_A) 
         result = Bus(width)

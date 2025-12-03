@@ -27,7 +27,9 @@ class ASR:
         return self.__Input_A
     def get_Input_B(self) -> Bus:
         return self.__Input_B
-
+    def get_Output(self) -> Bus:
+        return self.__Stage_3
+    
     # --- Metodos Internos ---
     def __Calculate_Stage_0(self, input: Bus, S_in: Bit) -> Bus:
         # El Bit de Signo es el de índice 0 en Big-Endian
