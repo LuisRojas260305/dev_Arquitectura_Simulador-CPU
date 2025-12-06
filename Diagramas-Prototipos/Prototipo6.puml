@@ -1,0 +1,540 @@
+@startuml Simulador_Computador_Digital_Completo
+title: Arquitectura Completa del Simulador Digital
+
+' =================================================================
+' 1. COMPONENTES BÁSICOS DEL SISTEMA
+' =================================================================
+package "Componentes Basicos" {
+    class Bit {
+        - valor : int (0 o 1)
+        --
+        + set_value(v : int)
+        + get_value() : int
+        + toggle()
+        + __str__() : str
+    }
+    
+    class Bus {
+        - lineas : Bit[ancho]
+        - ancho : int (16)
+        --
+        + set_Binary_value(valor : int)
+        + get_Decimal_value() : int
+        + get_Binary_value() : str
+        + get_Hexadecimal_value() : str
+        + get_Line_bit(index : int) : Bit
+        + set_Line_bit(index : int, value : Bit)
+    }
+    
+    abstract class PuertaLogica {
+        - Entrada_A : Bit
+        - Entrada_B : Bit
+        - Salida : Bit
+        --
+        + Calcular() : Bit
+    }
+    
+    class PuertaAND extends PuertaLogica
+    class PuertaOR extends PuertaLogica
+    class PuertaXOR extends PuertaLogica
+    class PuertaNOT extends PuertaLogica
+    
+    class RegistroGenerico {
+        - Valor : Bus
+        - Habilitacion_Entrada : Bit
+        - Habilitacion_Salida : Bit
+        --
+        + Cargar(datos : Bus)
+        + Leer() : Bus
+        + Habilitar_Entrada()
+        + Deshabilitar_Entrada()
+        + Habilitar_Salida()
+        + Deshabilitar_Salida()
+    }
+}
+
+' =================================================================
+' 2. SUBSISTEMA ALU (Unidad Aritmético Lógica)
+' =================================================================
+package "Unidad Aritmetico-Lógica (ALU)" {
+    
+    package "Componentes ALU" {
+        class FullAdder {
+            - A : Bit
+            - B : Bit
+            - C_in : Bit
+            - Suma : Bit
+            - C_out : Bit
+            --
+            + Calcular() : {Bit, Bit}
+        }
+        
+        class Multiplexor_ALU {
+            - Entradas : Bus[3] (Arit, Log, Shift)
+            - Seleccion : Bus(2)
+            - Salida : Bus
+            --
+            + Seleccionar() : Bus
+        }
+        
+        class Multiplexor_Entrada_A {
+            - Entradas : Bus[4] (AC, MDR, Temp, Cero)
+            - Seleccion : Bus(2)
+            - Salida : Bus
+            --
+            + Seleccionar() : Bus
+        }
+        
+        class Multiplexor_Entrada_B {
+            - Entradas : Bus[4] (MDR, Inmediato, Uno, MenosUno)
+            - Seleccion : Bus(2)
+            - Salida : Bus
+            --
+            + Seleccionar() : Bus
+        }
+    }
+    
+    package "Unidades Funcionales" {
+        class UnidadAritmetica {
+            - FullAdders : FullAdder[16]
+            - Inversores : PuertaNOT[16]
+            - C_in : Bit
+            --
+            + Calcular(A : Bus, B : Bus, C_in : Bit) : {Bus, Bit}
+        }
+        
+        class UnidadLogica {
+            - Puertas_AND : PuertaAND[16]
+            - Puertas_OR : PuertaOR[16]
+            - Puertas_XOR : PuertaXOR[16]
+            - Puertas_NOT : PuertaNOT[16]
+            - Modo : Bus(2)
+            --
+            + Calcular(A : Bus, B : Bus, Modo : Bus) : Bus
+        }
+        
+        class UnidadDesplazamiento {
+            - Modo : Bus(3)
+            - Cantidad : Bus(4)
+            --
+            + Calcular(A : Bus, B : Bus, Modo : Bus) : Bus
+        }
+    }
+    
+    class ALU {
+        - entrada_A : Bus
+        - entrada_B : Bus
+        - resultado : Bus
+        - aluop : Bus(2)
+        - modo_funcion : Bus(3)
+        - flag_Z : Bit
+        - flag_C : Bit
+        - flag_N : Bit
+        --
+        + ejecutar() : Bus
+        + set_entrada_A(bus : Bus)
+        + set_entrada_B(bus : Bus)
+        + set_aluop(bus : Bus)
+        + set_modo_funcion(bus : Bus)
+        + get_resultado() : Bus
+        + get_flag_Z() : Bit
+        + get_flag_C() : Bit
+        + get_flag_N() : Bit
+    }
+}
+
+' =================================================================
+' 3. SUBSISTEMA CPU (Unidad Central de Procesamiento)
+' =================================================================
+package "CPU - Unidad Central de Procesamiento" {
+    
+    package "Banco de Registros" {
+        class PC <<Registro>> {
+            - valor : Bus(16)
+            - habilitar_salida : Bit
+            - habilitar_entrada : Bit
+            --
+            + incrementar()
+            + cargar(valor : Bus)
+            + leer() : Bus
+        }
+        
+        class IR <<Registro>> {
+            - valor : Bus(16)
+            - opcode : Bus(4)
+            - operando : Bus(12)
+            --
+            + decodificar()
+            + get_opcode() : Bus
+            + get_operando() : Bus
+        }
+        
+        class AC <<Registro>> {
+            - valor : Bus(16)
+            - habilitar_salida : Bit
+            - habilitar_entrada : Bit
+            --
+            + cargar(valor : Bus)
+            + leer() : Bus
+            + limpiar()
+        }
+        
+        class MAR <<Registro>> {
+            - valor : Bus(12)
+            - habilitar_salida : Bit
+            --
+            + cargar(valor : Bus)
+            + leer() : Bus
+        }
+        
+        class MDR <<Registro>> {
+            - valor : Bus(16)
+            - habilitar_salida : Bit
+            - habilitar_entrada : Bit
+            --
+            + cargar(valor : Bus)
+            + leer() : Bus
+        }
+        
+        class Temp <<Registro>> {
+            - valor : Bus(16)
+            --
+            + cargar(valor : Bus)
+            + leer() : Bus
+        }
+        
+        class RegistroEstado {
+            - flag_Z : Bit
+            - flag_C : Bit
+            - flag_N : Bit
+            - flag_V : Bit
+            --
+            + actualizar(Z : Bit, C : Bit, N : Bit, V : Bit)
+            + leer_Z() : Bit
+            + leer_C() : Bit
+            + leer_N() : Bit
+            + leer_V() : Bit
+        }
+    }
+    
+    package "Sistema de Buses" {
+        class Bus_Datos <<Bus>> {
+            - lineas : Bit[16]
+            - fuente_actual : string
+            --
+            + conectar_fuente(componente : string)
+            + desconectar_fuente(componente : string)
+            + leer() : Bus
+        }
+        
+        class Bus_Direcciones <<Bus>> {
+            - lineas : Bit[12]
+            --
+            + escribir(direccion : Bus)
+            + leer() : Bus
+        }
+        
+        class Bus_Control <<Bus>> {
+            - lineas : Bit[16]
+            - señales : dict
+            --
+            + activar_señal(nombre : str)
+            + desactivar_señal(nombre : str)
+            + leer_señal(nombre : str) : Bit
+        }
+    }
+    
+    package "Unidad de Control" {
+        class UnidadControl {
+            - estado_actual : string (FETCH, DECODE, EXECUTE)
+            - microcodigo : dict
+            - señales_activas : list
+            --
+            + decodificar(opcode : Bus) : dict
+            + generar_señales_fetch()
+            + generar_señales_decode(opcode : int)
+            + generar_señales_execute(opcode : int)
+            + siguiente_estado()
+            + reset()
+        }
+        
+        class Decodificador {
+            - instruccion : Bus(16)
+            - opcode : Bus(4)
+            - operando : Bus(12)
+            --
+            + decodificar(instruccion : Bus) : {opcode, operando}
+            + es_operacion_aritmetica() : bool
+            + es_operacion_logica() : bool
+            + es_operacion_desplazamiento() : bool
+        }
+        
+        class GeneradorSeñales {
+            - señales : dict
+            --
+            + activar_PC_load()
+            + activar_PC_inc()
+            + activar_IR_load()
+            + activar_AC_load()
+            + activar_MAR_load()
+            + activar_MDR_load()
+            + activar_Mem_read()
+            + activar_Mem_write()
+            + configurar_ALU(aluop : Bus, alufunc : Bus)
+            + configurar_MUX_A(seleccion : int)
+            + configurar_MUX_B(seleccion : int)
+        }
+    }
+    
+    class CPU {
+        - registros : BancoRegistros
+        - alu : ALU
+        - unidad_control : UnidadControl
+        - bus_datos : Bus_Datos
+        - bus_direcciones : Bus_Direcciones
+        - bus_control : Bus_Control
+        - ciclo_actual : int
+        - detenida : bool
+        --
+        + ejecutar_ciclo()
+        + fetch()
+        + decode()
+        + execute()
+        + reset()
+        + cargar_programa(programa_json : dict)
+        + conectar_memoria(memoria : RAM)
+        + conectar_io(dispositivo : IO_Device)
+    }
+}
+
+' =================================================================
+' 4. SUBSISTEMA MEMORIA
+' =================================================================
+package "Sistema de Memoria" {
+    
+    class RAM {
+        - celdas : Bus[4096]
+        - ultima_lectura : int
+        - ultima_escritura : int
+        - info_programa : dict
+        --
+        + leer(direccion : Bus) : Bus
+        + escribir(direccion : Bus, datos : Bus)
+        + cargar_desde_json(programa_json : dict)
+        + obtener_snapshot() : list
+        + limpiar()
+    }
+    
+    class ROM <<Registro>> {
+        - contenido : Bus[256]
+        - direccion_base : int
+        --
+        + leer(direccion : Bus) : Bus
+        + cargar_bootloader()
+    }
+    
+    class HDD <<Disco Duro>> {
+        - base_path : str
+        - programas : dict
+        --
+        + guardar_programa(nombre : str, programa_json : dict) : bool
+        + cargar_programa(nombre : str) : dict
+        + listar_programas() : list
+        + eliminar_programa(nombre : str) : bool
+        + exportar_a_asm(nombre_json : str, nombre_salida : str) : bool
+    }
+}
+
+' =================================================================
+' 5. SUBSISTEMA ENTRADA/SALIDA (I/O)
+' =================================================================
+package "Dispositivos de Entrada/Salida" {
+    
+    class Display_16Segmentos {
+        - buffer : int[256]
+        - cursor : int
+        - direccion_base : int (0xF000)
+        - mapa_segmentos : dict
+        --
+        + escribir_caracter(codigo : int)
+        + desplazar_arriba()
+        + limpiar()
+        + leer_memoria(direccion : int) : int
+        + escribir_memoria(direccion : int, valor : int)
+        + renderizar() : list
+    }
+    
+    class Teclado {
+        - buffer : list
+        - tamaño_buffer : int
+        - estado : int
+        - control : int
+        - direccion_base : int (0xF100)
+        - mapa_teclas : dict
+        --
+        + tecla_presionada(codigo_pygame : int) : bool
+        + leer_tecla() : int
+        + leer_memoria(direccion : int) : int
+        + escribir_memoria(direccion : int, valor : int)
+        + buffer_vacio() : bool
+    }
+    
+    class Timer {
+        - contador : int
+        - divisor : int
+        - habilitado : Bit
+        - direccion_base : int (0xF200)
+        --
+        + actualizar()
+        + leer_memoria(direccion : int) : int
+        + escribir_memoria(direccion : int, valor : int)
+        + reset()
+    }
+    
+    abstract class IO_Device {
+        - direccion_base : int
+        --
+        + leer_memoria(direccion : int) : int
+        + escribir_memoria(direccion : int, valor : int)
+    }
+}
+
+' =================================================================
+' 6. RELACIONES DE COMPOSICIÓN PRINCIPALES
+' =================================================================
+
+' CPU contiene estos componentes
+CPU "1" *-- "1" BancoRegistros : contiene
+CPU "1" *-- "1" ALU : contiene
+CPU "1" *-- "1" UnidadControl : contiene
+CPU "1" *-- "1" Bus_Datos : contiene
+CPU "1" *-- "1" Bus_Direcciones : contiene
+CPU "1" *-- "1" Bus_Control : contiene
+
+' Banco de Registros está compuesto por
+BancoRegistros "1" *-- "1" PC : contiene
+BancoRegistros "1" *-- "1" IR : contiene
+BancoRegistros "1" *-- "1" AC : contiene
+BancoRegistros "1" *-- "1" MAR : contiene
+BancoRegistros "1" *-- "1" MDR : contiene
+BancoRegistros "1" *-- "1" Temp : contiene
+BancoRegistros "1" *-- "1" RegistroEstado : contiene
+
+' ALU está compuesta por
+ALU "1" *-- "1" UnidadAritmetica : contiene
+ALU "1" *-- "1" UnidadLogica : contiene
+ALU "1" *-- "1" UnidadDesplazamiento : contiene
+ALU "1" *-- "1" Multiplexor_ALU : contiene
+ALU "1" *-- "1" Multiplexor_Entrada_A : contiene
+ALU "1" *-- "1" Multiplexor_Entrada_B : contiene
+
+' Unidad Aritmética contiene
+UnidadAritmetica "1" *-- "16" FullAdder : contiene
+
+' Unidad Lógica contiene
+UnidadLogica "1" *-- "16" PuertaAND : contiene
+UnidadLogica "1" *-- "16" PuertaOR : contiene
+UnidadLogica "1" *-- "16" PuertaXOR : contiene
+UnidadLogica "1" *-- "16" PuertaNOT : contiene
+
+' Unidad de Control contiene
+UnidadControl "1" *-- "1" Decodificador : contiene
+UnidadControl "1" *-- "1" GeneradorSeñales : contiene
+
+' =================================================================
+' 7. RELACIONES DE CONEXIÓN Y CONTROL
+' =================================================================
+
+' Conexiones de datos entre CPU y Memoria
+CPU --> RAM : lee/escribe a través de\nBus_Datos y Bus_Direcciones
+CPU --> HDD : carga programas
+
+' Conexiones de E/S
+CPU --> Display_16Segmentos : memoria mapeada E/S
+CPU --> Teclado : memoria mapeada E/S
+CPU --> Timer : memoria mapeada E/S
+
+' Control de la ALU
+UnidadControl --> ALU : envía ALUop y ModoFunción
+UnidadControl --> Multiplexor_Entrada_A : controla SrcA_Sel
+UnidadControl --> Multiplexor_Entrada_B : controla SrcB_Sel
+
+' Control de registros
+GeneradorSeñales --> PC : PC_load, PC_inc
+GeneradorSeñales --> IR : IR_load
+GeneradorSeñales --> AC : AC_load
+GeneradorSeñales --> MAR : MAR_load
+GeneradorSeñales --> MDR : MDR_load
+GeneradorSeñales --> RAM : Mem_read, Mem_write
+
+' Actualización de flags
+ALU --> RegistroEstado : actualiza flags Z, C, N
+
+' =================================================================
+' 8. RELACIONES DE USO
+' =================================================================
+
+' Registros conectados al Bus de Datos
+AC --> Bus_Datos : puede enviar datos
+MDR --> Bus_Datos : puede enviar/recibir datos
+Temp --> Bus_Datos : puede enviar datos
+IR --> Bus_Datos : puede recibir datos (instrucciones)
+
+' Registros conectados al Bus de Direcciones
+MAR --> Bus_Direcciones : envía direcciones
+PC --> Bus_Direcciones : puede enviar direcciones (para fetch)
+
+' Multiplexores conectan fuentes a ALU
+Multiplexor_Entrada_A --> ALU : entrada A
+Multiplexor_Entrada_B --> ALU : entrada B
+
+' Fuentes de los multiplexores
+AC --> Multiplexor_Entrada_A : fuente 0
+MDR --> Multiplexor_Entrada_A : fuente 1
+MDR --> Multiplexor_Entrada_B : fuente 0
+Temp --> Multiplexor_Entrada_A : fuente 2
+
+' =================================================================
+' 9. INTERFACES DEL SISTEMA
+' =================================================================
+
+class SimuladorCompleto {
+    - cpu : CPU
+    - ram : RAM
+    - hdd : HDD
+    - display : Display_16Segmentos
+    - teclado : Teclado
+    - timer : Timer
+    - interfaz_pygame : Pygame_Interface
+    - editor_programas : Program_Editor
+    --
+    + iniciar()
+    + ejecutar_paso_a_paso()
+    + ejecutar_continuo()
+    + pausar()
+    + reiniciar()
+    + cargar_programa(nombre : str)
+    + guardar_programa(nombre : str)
+    + mostrar_estado() : dict
+}
+
+SimuladorCompleto "1" *-- "1" CPU : contiene
+SimuladorCompleto "1" *-- "1" RAM : contiene
+SimuladorCompleto "1" *-- "1" HDD : contiene
+SimuladorCompleto "1" *-- "1" Display_16Segmentos : contiene
+SimuladorCompleto "1" *-- "1" Teclado : contiene
+SimuladorCompleto "1" *-- "1" Timer : contiene
+
+' =================================================================
+' 10. CICLO DE INSTRUCCIÓN
+' =================================================================
+
+note top of CPU
+  Ciclo de Instrucción:
+  1. FETCH: PC → MAR → RAM → MDR → IR
+  2. DECODE: IR → UnidadControl (genera señales)
+  3. EXECUTE: Operación específica (ALU, E/S, etc.)
+  4. (Opcional) WRITE BACK: Resultado → Registro/Memoria
+end note
+
+@enduml

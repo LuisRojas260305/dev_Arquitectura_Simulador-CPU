@@ -14,7 +14,7 @@ class Bus:
 
     # Constantes de clase
     DEFAULT_WIDTH: ClassVar[int] = 16
-    MAX_WIDTH: ClassVar[int] = 16
+    MAX_WIDTH: ClassVar[int] = 64
 
     # Inicializacion post __init__
     def __post_init__(self):

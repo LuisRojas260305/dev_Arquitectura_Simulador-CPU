@@ -1,0 +1,42 @@
+{
+  "metadata": {
+    "name": "Programa de Ejemplo",
+    "author": "Nombre",
+    "description": "Descripción detallada",
+    "created": "2024-12-01T10:30:00",
+    "format_version": "1.0"
+  },
+
+  "program": [
+    {
+      "address": 0,
+      "instruction": "0x3100",
+      "mnemonic": "LOADI",
+      "operand": 256,
+      "comment": "Cargar valor 256"
+    },
+    {
+      "address": 1,
+      "instruction": "0x2010",
+      "mnemonic": "STORE",
+      "operand": 16,
+      "comment": "Guardar en memoria"
+    }
+  ],
+  
+  "data_section": {
+    "variables": {
+      "counter": {"address": 16, "value": 0},
+      "result": {"address": 17, "value": 0}
+    },
+    "strings": {
+      "welcome": {"address": 32, "value": "Hola Mundo"}
+    }
+  },
+  
+  "execution_info": {
+    "entry_point": 0,
+    "stack_pointer": 4080,
+    "interrupts_enabled": false
+  }
+}
