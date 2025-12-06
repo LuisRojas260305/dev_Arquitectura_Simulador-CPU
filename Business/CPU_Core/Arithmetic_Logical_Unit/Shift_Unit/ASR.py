@@ -1,6 +1,6 @@
 from Business.Basic_Components.Bus import Bus
 from Business.Basic_Components.Bit import Bit
-from Business.CPU_Core.Arithmetic_Logical_Unit.Shift_Unit.MUX2to1 import MUX2to1
+from .MUX2to1 import MUX2to1
 
 class ASR:
     

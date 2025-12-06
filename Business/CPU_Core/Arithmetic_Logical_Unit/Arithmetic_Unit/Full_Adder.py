@@ -23,7 +23,7 @@ class Full_Adder:
         self.__Or = OR_Gate()
 
     # Metodos
-    def Calculate(self):
+    def calculate(self):
         
         # Output = A⊕B⊕Cin​
         # C_out​ = (A⋅B)+((A⊕B)⋅Cin​)

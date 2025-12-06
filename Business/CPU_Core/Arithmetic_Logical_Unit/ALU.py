@@ -4,7 +4,7 @@ from Business.Basic_Components.Bit import Bit
 from .Arithmetic_Unit.Arithmetic_Unit import Arithmetic_Unit
 from .Logical_Unit.Logical_Unit import Logical_Unit
 from .Shift_Unit.Shift_Unit import Shift_Unit
-from .MUX import ALU_MUX
+from .ALU_MUX import ALU_MUX
 
 class ALU:
     """

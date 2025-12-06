@@ -1,6 +1,6 @@
 # File Tree: CPU_Simulator
 
-**Generated:** 5/12/2025, 4:08:38 p. m.
+**Generated:** 6/12/2025, 5:15:16 p. m.
 **Root Path:** `/home/luis/Dev/CPU_Simulator`
 
 ```
@@ -28,8 +28,8 @@
 │   │   │   │   ├── 🐍 Full_Adder.py
 │   │   │   │   └── 🐍 __init__.py
 │   │   │   ├── 📁 Logical_Unit
+│   │   │   │   ├── 🐍 Logical_MUX.py
 │   │   │   │   ├── 🐍 Logical_Unit.py
-│   │   │   │   ├── 🐍 MUX.py
 │   │   │   │   └── 🐍 __init__.py
 │   │   │   ├── 📁 Shift_Unit
 │   │   │   │   ├── 🐍 ASR.py
@@ -43,12 +43,20 @@
 │   │   │   │   ├── 🐍 Shift_Unit.py
 │   │   │   │   └── 🐍 __init__.py
 │   │   │   ├── 🐍 ALU.py
-│   │   │   ├── 🐍 MUX.py
+│   │   │   ├── 🐍 ALU_MUX.py
 │   │   │   └── 🐍 __init__.py
 │   │   ├── 📁 Control_Unit
-│   │   │   └── 🐍 Record_Bank.py
+│   │   │   ├── 🐍 ControlStore.py
+│   │   │   ├── 🐍 Decoder.py
+│   │   │   ├── 🐍 FSM.py
+│   │   │   ├── 🐍 MicroCounter.py
+│   │   │   ├── 🐍 Record_Bank.py
+│   │   │   ├── 🐍 SignalGenerator.py
+│   │   │   └── 🐍 __init__.py
 │   │   └── 🐍 __init__.py
 │   ├── 📁 Memory
+│   │   ├── 🐍 RAM.py
+│   │   ├── 🐍 SystemBus.py
 │   │   └── 🐍 __init__.py
 │   └── 🐍 __init__.py
 ├── 📁 Diagramas-Prototipos
@@ -65,6 +73,7 @@
 ├── 📁 assets
 │   └── 📁 Compuertas
 ├── 📁 docs
+│   ├── 📝 # File Tree: CPU_Simulator.md
 │   ├── 📝 ALU_Mapeo_Control.md
 │   ├── 🖼️ Esquema Full Adder.png
 │   ├── 📝 ISA_Conjunto_Instrucciones.md
@@ -73,9 +82,11 @@
 │   └── 📕 Project_Simulador de Computador Digital_UNEG_2025_2.pdf
 ├── ⚙️ .gitignore
 ├── ⚙️ Plantilla.json
+├── 🐍 aux.py
 ├── ⚙️ pyproject.toml
 ├── 📄 requirements.txt
-└── 🐍 setup.py
+├── 🐍 setup.py
+└── 🐍 test_fsm.py
 ```
 
 ---

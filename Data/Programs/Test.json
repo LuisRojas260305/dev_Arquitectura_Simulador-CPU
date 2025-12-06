@@ -1,0 +1,81 @@
+{
+  "metadata": {
+    "name": "Programa de Prueba ALU",
+    "author": "CPU Simulator",
+    "description": "Prueba de operaciones aritméticas y lógicas",
+    "created": "2024-12-06",
+    "format_version": "1.0"
+  },
+
+  "program": [
+    {
+      "address": 0,
+      "instruction": "0x9005",
+      "mnemonic": "LOADI",
+      "operand": 5,
+      "comment": "Cargar 5 en AC"
+    },
+    {
+      "address": 1,
+      "instruction": "0x2010",
+      "mnemonic": "STORE",
+      "operand": 16,
+      "comment": "Guardar AC en dirección 16"
+    },
+    {
+      "address": 2,
+      "instruction": "0x9003",
+      "mnemonic": "LOADI",
+      "operand": 3,
+      "comment": "Cargar 3 en AC"
+    },
+    {
+      "address": 3,
+      "instruction": "0x3010",
+      "mnemonic": "ADD",
+      "operand": 16,
+      "comment": "Sumar AC + memoria[16] (5+3=8)"
+    },
+    {
+      "address": 4,
+      "instruction": "0x2011",
+      "mnemonic": "STORE",
+      "operand": 17,
+      "comment": "Guardar resultado en dirección 17"
+    },
+    {
+      "address": 5,
+      "instruction": "0xA010",
+      "mnemonic": "AND",
+      "operand": 16,
+      "comment": "AND entre AC y memoria[16]"
+    },
+    {
+      "address": 6,
+      "instruction": "0xD001",
+      "mnemonic": "SLL",
+      "operand": 1,
+      "comment": "Shift Left Logical 1 posición"
+    },
+    {
+      "address": 7,
+      "instruction": "0xF000",
+      "mnemonic": "HALT",
+      "operand": 0,
+      "comment": "Detener CPU"
+    }
+  ],
+  
+  "data_section": {
+    "variables": {
+      "valor1": {"address": 16, "value": 0},
+      "resultado": {"address": 17, "value": 0}
+    }
+  },
+  
+  "execution_info": {
+    "entry_point": 0,
+    "stack_pointer": 4080,
+    "interrupts_enabled": false
+  }
+}

@@ -1,3 +1,3 @@
-# Auto-generated init file
+from .CPU import CPU
 
-__all__ = []
+__all__ = ['CPU']

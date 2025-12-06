@@ -47,7 +47,7 @@ class Arithmetic_Unit:
             self.__FAs[i].set_C_in(carry)
             
             # Calcular
-            self.__FAs[i].Calculate()
+            self.__FAs[i].calculate()
             
             # Obtener resultados
             result.set_Line_bit(i, self.__FAs[i].get_Output())

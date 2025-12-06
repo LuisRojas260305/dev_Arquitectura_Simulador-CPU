@@ -7,5 +7,6 @@ __author__ = "Luis"
 
 # Importaciones principales - mantenerlas mínimas para evitar problemas
 from Business.Basic_Components import Bit, Bus
+from .Computer_System import ComputerSystem
 
-__all__ = ['Bit', 'Bus']
+__all__ = ['Bit', 'Bus', 'ComputerSystem']

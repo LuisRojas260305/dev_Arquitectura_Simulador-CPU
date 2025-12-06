@@ -1,6 +1,6 @@
 from Business.Basic_Components.Bus import Bus
 from Business.Basic_Components.Bit import Bit
-from .MUX import MUX
+from .Logical_MUX import MUX
 from Business.Basic_Components.Logic_Gates.AND_Gate import AND_Gate
 from Business.Basic_Components.Logic_Gates.OR_Gate import OR_Gate
 from Business.Basic_Components.Logic_Gates.XOR_Gate import XOR_Gate

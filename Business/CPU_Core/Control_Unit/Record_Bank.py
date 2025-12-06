@@ -55,6 +55,13 @@ class Record_Bank:
     def get_MAR(self): return self.__MAR
     def get_MDR(self): return self.__MDR
     def get_TEMP(self): return self.__TEMP
+    def get_HI(self): return self.__HI
+    def get_LO(self): return self.__LO
+    def get_MD_CNT(self): return self.__MD_CNT
+    def get_MD_STATE(self): return self.__MD_STATE
+    def get_STEP_CNT(self): return self.__STEP_CNT
+    def get_OP_TYPE(self): return self.__OP_TYPE
+    def get_STATUS(self): return self.__STATUS
 
     # HEX
     def get_PC_HEX(self): return self.__PC.get_Hexadecimal_value()
@@ -63,13 +70,54 @@ class Record_Bank:
     def get_MAR_HEX(self): return self.__MAR.get_Hexadecimal_value()
     def get_MDR_HEX(self): return self.__MDR.get_Hexadecimal_value()
     def get_TEMP_HEX(self): return self.__TEMP.get_Hexadecimal_value()
+    def get_HI_HEX(self): return self.__HI.get_Hexadecimal_value()
+    def get_LO_HEX(self): return self.__LO.get_Hexadecimal_value()
+    def get_MD_CNT_HEX(self): return self.__MD_CNT.get_Hexadecimal_value()
+    def get_MD_STATE_HEX(self): return self.__MD_STATE.get_Hexadecimal_value()
+    def get_STEP_CNT_HEX(self): return self.__STEP_CNT.get_Hexadecimal_value()
+    def get_OP_TYPE_HEX(self): return self.__OP_TYPE.get_Hexadecimal_value()
+    def get_STATUS_HEX(self): return self.__STATUS.get_Hexadecimal_value()
 
     # Setters
-    def set_PC(self, Input: Bus = Bus(16)): self.__PC = Input
-    def set_IR(self, Input: Bus = Bus(16)): self.__IR = Input
-    def set_AC(self, Input: Bus = Bus(16)): self.__AC = Input
-    def set_MAR(self, Input: Bus = Bus(16)): self.__MAR = Input
-    def set_MDR(self, Input: Bus = Bus(16)): self.__MDR = Input
-    def set_TEMP(self, Input: Bus = Bus(16)): self.__TEMP = Input
-    def set_FLAG_Z(self, Input: Bit): self.__FLAG_Z = Input
+    def set_PC(self, Input: Bus):
+        self.__PC.set_Value(Input)
+
+    def set_IR(self, Input: Bus):
+        self.__IR.set_Value(Input)
+
+    def set_AC(self, Input: Bus):
+        self.__AC.set_Value(Input)
+
+    def set_MAR(self, Input: Bus):
+        self.__MAR.set_Value(Input)
+
+    def set_MDR(self, Input: Bus):
+        self.__MDR.set_Value(Input)
+
+    def set_TEMP(self, Input: Bus):
+        self.__TEMP.set_Value(Input)
+
+    def set_FLAG_Z(self, Input: Bit): 
+        self.__FLAG_Z.set_value(Input)
+    
+    def set_HI(self, Input: Bit): 
+        self.__HI.set_value(Input)
+    
+    def set_LO(self, Input: Bit): 
+        self.__LO.set_value(Input)
+    
+    def set_MD_CNT(self, Input: Bit): 
+        self.__MD_CNT.set_value(Input)
+    
+    def set_MD_STATE(self, Input: Bit): 
+        self.__MD_STATE.set_value(Input)
+    
+    def set_STEP_CNT(self, Input: Bit):
+        self.__STEP_CNT.set_value(Input)
+    
+    def set_OP_TYPE(self, Input: Bit):
+        self.__OP_TYPE.set_value(Input)
+    
+    def set_STATUS(self, Input: Bit):
+        self.__STATUS.set_value(Input)
     
