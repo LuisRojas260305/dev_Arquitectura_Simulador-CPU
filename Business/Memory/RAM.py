@@ -102,11 +102,11 @@ class RAM:
             self.write_count += 1
             self.memory[address] = data
     
-    def read_direct(self, address: int) -> int:
-        """Lee directamente un valor entero"""
+    def read_direct(self, address: int) -> Bus:  # Asegurar que retorna Bus
+        """Lee directamente un valor de memoria (retorna Bus)"""
         if 0 <= address < self.size:
-            return self.memory[address].get_Decimal_value()
-        return 0
+            return self.memory[address]
+        return Bus(16, 0xFFFF)
     
     def write_direct(self, address: int, value: int):
         """Escribe directamente un valor entero"""

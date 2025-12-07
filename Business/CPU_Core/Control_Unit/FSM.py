@@ -32,7 +32,19 @@ class FSM:
         self.__and_gates = []
         self.__or_gates = []
         self.__not_gates = []
+    
+    def reset(self):
+        """Resetea la FSM al estado IDLE"""
+        self.__set_state_value(0)  # Estado IDLE
+        self.__update_outputs()
         
+        # Resetear señales de entrada
+        self.__start_mult.set_value(0)
+        self.__start_div.set_value(0)
+        self.__md_done.set_value(0)
+        self.__div_zero.set_value(0)
+        self.__reset.set_value(0)
+
     def update_state(self):
         """Calcula y actualiza el próximo estado"""
         if self.__reset.get_value() == 1:

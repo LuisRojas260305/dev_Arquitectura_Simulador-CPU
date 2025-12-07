@@ -112,12 +112,13 @@ class ComputerSystem:
             return
         
         print("\n=== REGISTROS DE CPU ===")
-        print(f"PC (Program Counter):  {self.cpu.registers.get_PC_HEX()}")
-        print(f"IR (Instruction Reg):  {self.cpu.registers.get_IR_HEX()}")
-        print(f"AC (Accumulator):      {self.cpu.registers.get_AC_HEX()}")
-        print(f"MAR (Mem Addr Reg):    {self.cpu.registers.get_MAR_HEX()}")
-        print(f"MDR (Mem Data Reg):    {self.cpu.registers.get_MDR_HEX()}")
-        print(f"TEMP (Temporal):       {self.cpu.registers.get_TEMP_HEX()}")
+        # Usar get_Hexadecimal_value() en lugar de get_PC_HEX() que no existe
+        print(f"PC (Program Counter):  {self.cpu.registers.get_PC().get_Hexadecimal_value()}")
+        print(f"IR (Instruction Reg):  {self.cpu.registers.get_IR().get_Hexadecimal_value()}")
+        print(f"AC (Accumulator):      {self.cpu.registers.get_AC().get_Hexadecimal_value()}")
+        print(f"MAR (Mem Addr Reg):    {self.cpu.registers.get_MAR().get_Hexadecimal_value()}")
+        print(f"MDR (Mem Data Reg):    {self.cpu.registers.get_MDR().get_Hexadecimal_value()}")
+        print(f"TEMP (Temporal):       {self.cpu.registers.get_TEMP().get_Hexadecimal_value()}")
         
         flags = self.cpu.registers
         print(f"\nFlags:")

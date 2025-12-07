@@ -1,13 +1,3 @@
-"""
-Registros:
-- PC (16 bits) - Program Counter
-- IR (16 bits) - Instruction Register  
-- AC (16 bits) - Accumulator
-- MAR (12 bits) - Memory Address Register
-- MDR (16 bits) - Memory Data Register
-- Temp (16 bits) - Registro Temporal
-"""
-
 from Business.Basic_Components.Bus import Bus
 from Business.Basic_Components.Bit import Bit
 from Business.Basic_Components.Record import Record
@@ -34,7 +24,7 @@ class Record_Bank:
         # Registros para control de microinstrucciones
         self.__STEP_CNT = Record(4)
         self.__OP_TYPE = Record(4)
-        self.__STATUS= Record(8)
+        self.__STATUS = Record(8)
 
         # Banderas
         self.__FLAG_Z = Bit()
@@ -63,22 +53,22 @@ class Record_Bank:
     def get_OP_TYPE(self): return self.__OP_TYPE
     def get_STATUS(self): return self.__STATUS
 
-    # HEX
-    def get_PC_HEX(self): return self.__PC.get_Hexadecimal_value()
-    def get_IR_HEX(self): return self.__IR.get_Hexadecimal_value()
-    def get_AC_HEX(self): return self.__AC.get_Hexadecimal_value()
-    def get_MAR_HEX(self): return self.__MAR.get_Hexadecimal_value()
-    def get_MDR_HEX(self): return self.__MDR.get_Hexadecimal_value()
-    def get_TEMP_HEX(self): return self.__TEMP.get_Hexadecimal_value()
-    def get_HI_HEX(self): return self.__HI.get_Hexadecimal_value()
-    def get_LO_HEX(self): return self.__LO.get_Hexadecimal_value()
-    def get_MD_CNT_HEX(self): return self.__MD_CNT.get_Hexadecimal_value()
-    def get_MD_STATE_HEX(self): return self.__MD_STATE.get_Hexadecimal_value()
-    def get_STEP_CNT_HEX(self): return self.__STEP_CNT.get_Hexadecimal_value()
-    def get_OP_TYPE_HEX(self): return self.__OP_TYPE.get_Hexadecimal_value()
-    def get_STATUS_HEX(self): return self.__STATUS.get_Hexadecimal_value()
+    # HEX (usando métodos de Record)
+    def get_PC_HEX(self): return self.__PC.get_Hex_Value()
+    def get_IR_HEX(self): return self.__IR.get_Hex_Value()
+    def get_AC_HEX(self): return self.__AC.get_Hex_Value()
+    def get_MAR_HEX(self): return self.__MAR.get_Hex_Value()
+    def get_MDR_HEX(self): return self.__MDR.get_Hex_Value()
+    def get_TEMP_HEX(self): return self.__TEMP.get_Hex_Value()
+    def get_HI_HEX(self): return self.__HI.get_Hex_Value()
+    def get_LO_HEX(self): return self.__LO.get_Hex_Value()
+    def get_MD_CNT_HEX(self): return self.__MD_CNT.get_Hex_Value()
+    def get_MD_STATE_HEX(self): return self.__MD_STATE.get_Hex_Value()
+    def get_STEP_CNT_HEX(self): return self.__STEP_CNT.get_Hex_Value()
+    def get_OP_TYPE_HEX(self): return self.__OP_TYPE.get_Hex_Value()
+    def get_STATUS_HEX(self): return self.__STATUS.get_Hex_Value()
 
-    # Setters
+    # Setters (CORREGIDOS - dentro de la clase)
     def set_PC(self, Input: Bus):
         self.__PC.set_Value(Input)
 
@@ -98,26 +88,31 @@ class Record_Bank:
         self.__TEMP.set_Value(Input)
 
     def set_FLAG_Z(self, Input: Bit): 
-        self.__FLAG_Z.set_value(Input)
-    
-    def set_HI(self, Input: Bit): 
-        self.__HI.set_value(Input)
-    
-    def set_LO(self, Input: Bit): 
-        self.__LO.set_value(Input)
-    
-    def set_MD_CNT(self, Input: Bit): 
-        self.__MD_CNT.set_value(Input)
-    
-    def set_MD_STATE(self, Input: Bit): 
-        self.__MD_STATE.set_value(Input)
-    
-    def set_STEP_CNT(self, Input: Bit):
-        self.__STEP_CNT.set_value(Input)
-    
-    def set_OP_TYPE(self, Input: Bit):
-        self.__OP_TYPE.set_value(Input)
-    
-    def set_STATUS(self, Input: Bit):
-        self.__STATUS.set_value(Input)
-    
+        self.__FLAG_Z.set_value(Input.get_value())  
+
+    def set_FLAG_C(self, Input: Bit): 
+        self.__FLAG_C.set_value(Input.get_value())
+
+    def set_FLAG_N(self, Input: Bit): 
+        self.__FLAG_N.set_value(Input.get_value())
+
+    def set_HI(self, Input: Bus): 
+        self.__HI.set_Value(Input)
+
+    def set_LO(self, Input: Bus): 
+        self.__LO.set_Value(Input)
+
+    def set_MD_CNT(self, Input: Bus): 
+        self.__MD_CNT.set_Value(Input)
+
+    def set_MD_STATE(self, Input: Bus): 
+        self.__MD_STATE.set_Value(Input)
+
+    def set_STEP_CNT(self, Input: Bus):
+        self.__STEP_CNT.set_Value(Input)
+
+    def set_OP_TYPE(self, Input: Bus):
+        self.__OP_TYPE.set_Value(Input)
+
+    def set_STATUS(self, Input: Bus):
+        self.__STATUS.set_Value(Input)

@@ -1,5 +1,3 @@
-# Business/CPU_Core/Control_Unit/SignalGenerator.py
-
 from Business.Basic_Components.Bus import Bus
 from Business.Basic_Components.Bit import Bit
 
@@ -58,6 +56,7 @@ class SignalGenerator:
             'END_INSTR': Bit(0)
         }
 
+        # Añadir señales para multiplexores de bus
         self.__signals.update({
             # Señales para multiplexores de bus (bits 32-39)
             'BUS_SEL_PC': Bit(0),
@@ -70,7 +69,7 @@ class SignalGenerator:
             'BUS_SEL_CONST': Bit(0),
         })
         
-        # Mapeo bit → nombre de señal (corregido para ser consistente)
+        # Mapeo bit → nombre de señal
         self.__bit_to_signal = {
             0: 'ALUop0',
             1: 'ALUop1',
@@ -116,8 +115,8 @@ class SignalGenerator:
         
         # Extraer cada bit y asignar a su señal correspondiente
         for bit_pos in range(32):
-            bit_value = control_word.get_Line_bit(bit_pos).get_value()
             if bit_pos in self.__bit_to_signal:
+                bit_value = control_word.get_Line_bit(bit_pos).get_value()
                 signal_name = self.__bit_to_signal[bit_pos]
                 self.__signals[signal_name].set_value(bit_value)
     
@@ -150,8 +149,13 @@ class SignalGenerator:
         return bus
         
     def get_all_signals(self) -> dict:
-        """Retorna todas las señales como diccionario"""
+        """Retorna todas las señales como diccionario de valores enteros"""
         return {k: v.get_value() for k, v in self.__signals.items()}
+    
+    # ALIAS para compatibilidad (opcional)
+    def get_signals(self) -> dict:
+        """Alias de get_all_signals() para compatibilidad"""
+        return self.get_all_signals()
     
     def get_active_signals(self) -> list:
         """Retorna lista de señales activas"""
@@ -161,3 +165,7 @@ class SignalGenerator:
         """Desactiva todas las señales"""
         for signal in self.__signals.values():
             signal.set_value(0)
+    
+    def __str__(self):
+        active = self.get_active_signals()
+        return f"SignalGenerator(Active: {len(active)} signals)"

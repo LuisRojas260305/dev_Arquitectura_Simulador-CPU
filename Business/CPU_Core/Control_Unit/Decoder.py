@@ -18,6 +18,103 @@ class Decoder:
         self.__Inverted_Bits = [None, None, None, None]
 
     # Métodos internos
+    def set_instruction(self, instruction_bus: Bus):
+        """Decodifica una instrucción de 16 bits (MSB en índice 0)"""
+        if instruction_bus.width != 16:
+            raise ValueError("La instrucción debe ser un bus de 16 bits")
+        
+        self.__current_instruction = instruction_bus
+        
+        # Extraer opcode (bits 15-12, índices 0-3 en MSB-first)
+        opcode = 0
+        for i in range(4):  # Bits 0-3 son opcode
+            bit_val = instruction_bus.get_Line_bit(i).get_value()
+            opcode = (opcode << 1) | bit_val
+        
+        self.__opcode = opcode
+        
+        # Extraer operando (bits 11-0, índices 4-15)
+        operand = 0
+        for i in range(4, 16):  # Bits 4-15 son operando
+            bit_val = instruction_bus.get_Line_bit(i).get_value()
+            operand = (operand << 1) | bit_val
+        
+        self.__operand = operand
+        
+        # Determinar tipo de instrucción basado en opcode
+        if opcode == 0x0:
+            self.__instruction_type = "NOP"
+        elif opcode == 0x1:
+            self.__instruction_type = "LOAD"
+        elif opcode == 0x2:
+            self.__instruction_type = "STORE"
+        elif opcode == 0x3:
+            self.__instruction_type = "ADD"
+        elif opcode == 0x4:
+            self.__instruction_type = "SUB"
+        elif opcode == 0x5:
+            self.__instruction_type = "JUMP"
+        elif opcode == 0x6:
+            self.__instruction_type = "JZ"
+        elif opcode == 0x7:
+            self.__instruction_type = "JN"
+        elif opcode == 0x8:
+            self.__instruction_type = "AND"
+        elif opcode == 0x9:
+            self.__instruction_type = "OR"
+        elif opcode == 0xA:
+            self.__instruction_type = "XOR"
+        elif opcode == 0xB:
+            self.__instruction_type = "NOT"
+        elif opcode == 0xC:
+            self.__instruction_type = "SHL"
+        elif opcode == 0xD:
+            self.__instruction_type = "SHR"
+        elif opcode == 0xE:
+            self.__instruction_type = "CALL"
+        elif opcode == 0xF:
+            self.__instruction_type = "HALT"
+        else:
+            self.__instruction_type = "UNKNOWN"
+    
+    # NUEVO MÉTODO: Reset del decoder
+    def reset(self):
+        """Resetea el decoder a estado inicial"""
+        self.__Input = Bus(4)
+        self.__Output = Bus(16, 0)
+        self.__current_instruction = Bus(16, 0)
+        self.__opcode = 0
+        self.__operand = 0
+        self.__instruction_type = "UNKNOWN"
+    
+    def get_opcode(self):
+        return self.__opcode
+    
+    def get_operand(self):
+        return self.__operand
+    
+    def get_instruction_type(self):
+        return self.__instruction_type
+    
+    def get_Output(self, line: int) -> Bit:
+        if 0 <= line < 16:
+            return self.__Output.get_Line_bit(line)
+        raise ValueError(f"Línea {line} fuera de rango [0-15]")
+    
+    def get_all_outputs(self) -> Bus:
+        return self.__Output
+    
+    def get_active_line(self) -> int:
+        """Retorna el índice de la línea activa (-1 si ninguna)"""
+        for i in range(16):
+            if self.__Output.get_Line_bit(i).get_value() == 1:
+                return i
+        return -1
+    
+    def __str__(self):
+        active = self.get_active_line()
+        return f"Decoder(Input={self.__Input.get_Binary_value()}, ActiveLine={active})"
+    
     def decode(self, Input: Bus):
         
         if Input.width != 4:
