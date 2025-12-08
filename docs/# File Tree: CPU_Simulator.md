@@ -1,6 +1,6 @@
 # File Tree: CPU_Simulator
 
-**Generated:** 7/12/2025, 12:30:24 p. m.
+**Generated:** 8/12/2025, 10:37:34 a. m.
 **Root Path:** `/home/luis/Dev/CPU_Simulator`
 
 ```
@@ -58,6 +58,7 @@
 │   │   └── 🐍 __init__.py
 │   ├── 📁 Memory
 │   │   ├── 🐍 RAM.py
+│   │   ├── 🐍 ROM.py
 │   │   ├── 🐍 SystemBus.py
 │   │   └── 🐍 __init__.py
 │   ├── 🐍 Computer_System.py
@@ -78,6 +79,7 @@
 │   └── 🐍 __init__.py
 ├── 📁 assets
 │   └── 📁 Compuertas
+├── 📁 data
 ├── 📁 docs
 │   ├── 📝 # File Tree: CPU_Simulator.md
 │   ├── 📝 ALU_Mapeo_Control.md
@@ -92,7 +94,8 @@
 ├── 🐍 main.py
 ├── ⚙️ pyproject.toml
 ├── 📄 requirements.txt
-└── 🐍 setup.py
+├── 🐍 setup.py
+└── 🐍 test.py
 ```
 
 ---

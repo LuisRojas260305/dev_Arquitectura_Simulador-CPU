@@ -1,0 +1,32 @@
+{
+  "timestamp": "2025-12-08T10:56:13.325674",
+  "tests": {
+    "assembly": {
+      "passed": true,
+      "message": "Sistema ensamblado"
+    },
+    "component_cpu": {
+      "passed": true,
+      "message": "CPU presente"
+    },
+    "component_ram": {
+      "passed": true,
+      "message": "RAM presente"
+    },
+    "component_systembus": {
+      "passed": true,
+      "message": "SystemBus presente"
+    },
+    "component_control unit": {
+      "passed": true,
+      "message": "Control Unit presente"
+    },
+    "ram_rw": {
+      "passed": true,
+      "message": "Lectura/escritura correcta"
+    }
+  },
+  "passed": 6,
+  "failed": 0,
+  "overall": "PASS"
+}

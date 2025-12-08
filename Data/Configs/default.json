@@ -1,0 +1,29 @@
+{
+  "system": {
+    "data_width": 16,
+    "address_width": 12,
+    "ram_size_kb": 4,
+    "cpu_frequency": 1000000,
+    "enable_debug": true
+  },
+  "bus": {
+    "arbitration": true,
+    "priority": [
+      "CPU",
+      "DMA",
+      "IO"
+    ]
+  },
+  "cpu": {
+    "registers": {
+      "pc": 0,
+      "ac": 0,
+      "ir": 0
+    },
+    "flags": {
+      "zero": 0,
+      "carry": 0,
+      "negative": 0
+    }
+  }
+}

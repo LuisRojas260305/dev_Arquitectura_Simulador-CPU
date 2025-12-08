@@ -35,7 +35,7 @@ class Bus:
     # Establece el valor del bus en binario
     def set_Binary_value(self, value: int):
         # Validacion
-        if value < 0 or value >= (1 << self.width):
+        if value < 0 or value > (1 << self.width):
             raise ValueError(f"Valor {value} fuera del rango del bus {0, (1 << self.width)}")
 
         for i in range(self.width):
