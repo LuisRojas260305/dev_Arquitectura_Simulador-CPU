@@ -1,0 +1,278 @@
+{
+  "metadata": {
+    "name": "Test Completo de Banderas",
+    "author": "CPU Simulator",
+    "description": "Prueba todas las condiciones de las banderas Z (Zero), C (Carry), N (Negative)",
+    "created": "2025-12-10",
+    "format_version": "3.0",
+    "isa_version": "1.1"
+  },
+
+  "program": [
+    {
+      "address": 0,
+      "instruction": "0x9000",
+      "mnemonic": "LOADI",
+      "operand": 0,
+      "comment": "Cargar 0 en AC (activa Z=1)"
+    },
+    {
+      "address": 1,
+      "instruction": "0x2010",
+      "mnemonic": "STORE",
+      "operand": 16,
+      "comment": "Guardar 0 en memoria[16]"
+    },
+    {
+      "address": 2,
+      "instruction": "0x9000",
+      "mnemonic": "LOADI",
+      "operand": 0,
+      "comment": "Cargar 0 en AC"
+    },
+    {
+      "address": 3,
+      "instruction": "0x3010",
+      "mnemonic": "ADD",
+      "operand": 16,
+      "comment": "0 + 0 = 0 (Z=1, C=0, N=0)"
+    },
+    {
+      "address": 4,
+      "instruction": "0x2011",
+      "mnemonic": "STORE",
+      "operand": 17,
+      "comment": "Guardar resultado en memoria[17]"
+    },
+    {
+      "address": 5,
+      "instruction": "0x90FF",
+      "mnemonic": "LOADI",
+      "operand": 255,
+      "comment": "Cargar 255 en AC (Z=0)"
+    },
+    {
+      "address": 6,
+      "instruction": "0x3011",
+      "mnemonic": "ADD",
+      "operand": 17,
+      "comment": "255 + 0 = 255 (Z=0, C=0, N=0)"
+    },
+    {
+      "address": 7,
+      "instruction": "0x2012",
+      "mnemonic": "STORE",
+      "operand": 18,
+      "comment": "Guardar 255 en memoria[18]"
+    },
+    {
+      "address": 8,
+      "instruction": "0x90FF",
+      "mnemonic": "LOADI",
+      "operand": 255,
+      "comment": "Cargar 255 en AC"
+    },
+    {
+      "address": 9,
+      "instruction": "0x3012",
+      "mnemonic": "ADD",
+      "operand": 18,
+      "comment": "255 + 255 = 510 (0x1FE) - Posible Carry"
+    },
+    {
+      "address": 10,
+      "instruction": "0x2013",
+      "mnemonic": "STORE",
+      "operand": 19,
+      "comment": "Guardar 510 en memoria[19]"
+    },
+    {
+      "address": 11,
+      "instruction": "0x9080",
+      "mnemonic": "LOADI",
+      "operand": 32768,
+      "comment": "Cargar 0x8000 en AC (negativo, N=1)"
+    },
+    {
+      "address": 12,
+      "instruction": "0x2014",
+      "mnemonic": "STORE",
+      "operand": 20,
+      "comment": "Guardar -32768 en memoria[20]"
+    },
+    {
+      "address": 13,
+      "instruction": "0x9001",
+      "mnemonic": "LOADI",
+      "operand": 1,
+      "comment": "Cargar 1 en AC"
+    },
+    {
+      "address": 14,
+      "instruction": "0x3014",
+      "mnemonic": "ADD",
+      "operand": 20,
+      "comment": "1 + (-32768) = -32767 (N=1, C=0)"
+    },
+    {
+      "address": 15,
+      "instruction": "0x2015",
+      "mnemonic": "STORE",
+      "operand": 21,
+      "comment": "Guardar -32767 en memoria[21]"
+    },
+    {
+      "address": 16,
+      "instruction": "0x9001",
+      "mnemonic": "LOADI",
+      "operand": 1,
+      "comment": "Cargar 1 en AC"
+    },
+    {
+      "address": 17,
+      "instruction": "0xD00F",
+      "mnemonic": "SHL",
+      "operand": 15,
+      "comment": "1 << 15 = 0x8000 (N=1, posible C)"
+    },
+    {
+      "address": 18,
+      "instruction": "0x2016",
+      "mnemonic": "STORE",
+      "operand": 22,
+      "comment": "Guardar 0x8000 en memoria[22]"
+    },
+    {
+      "address": 19,
+      "instruction": "0xE010",
+      "mnemonic": "SHR",
+      "operand": 16,
+      "comment": "0x8000 >> 16 = 0 (Z=1, C posible)"
+    },
+    {
+      "address": 20,
+      "instruction": "0x2017",
+      "mnemonic": "STORE",
+      "operand": 23,
+      "comment": "Guardar 0 en memoria[23]"
+    },
+    {
+      "address": 21,
+      "instruction": "0x9005",
+      "mnemonic": "LOADI",
+      "operand": 5,
+      "comment": "Cargar 5 en AC (Z=0)"
+    },
+    {
+      "address": 22,
+      "instruction": "0x4017",
+      "mnemonic": "SUB",
+      "operand": 23,
+      "comment": "5 - 0 = 5 (Z=0)"
+    },
+    {
+      "address": 23,
+      "instruction": "0x8000",
+      "mnemonic": "JZ",
+      "operand": 0,
+      "comment": "JUMP si Z=1 (no salta, Z=0)"
+    },
+    {
+      "address": 24,
+      "instruction": "0x2018",
+      "mnemonic": "STORE",
+      "operand": 24,
+      "comment": "Guardar AC en memoria[24] (instrucción ejecutada)"
+    },
+    {
+      "address": 25,
+      "instruction": "0x9000",
+      "mnemonic": "LOADI",
+      "operand": 0,
+      "comment": "Cargar 0 en AC (Z=1)"
+    },
+    {
+      "address": 26,
+      "instruction": "0x8000",
+      "mnemonic": "JZ",
+      "operand": 30,
+      "comment": "JUMP si Z=1 (salta a dirección 30)"
+    },
+    {
+      "address": 27,
+      "instruction": "0x2019",
+      "mnemonic": "STORE",
+      "operand": 25,
+      "comment": "Esta línea NO se ejecuta (salto realizado)"
+    },
+    {
+      "address": 28,
+      "instruction": "0x201A",
+      "mnemonic": "STORE",
+      "operand": 26,
+      "comment": "Esta línea NO se ejecuta (salto realizado)"
+    },
+    {
+      "address": 29,
+      "instruction": "0x201B",
+      "mnemonic": "STORE",
+      "operand": 27,
+      "comment": "Esta línea NO se ejecuta (salto realizado)"
+    },
+    {
+      "address": 30,
+      "instruction": "0x90AA",
+      "mnemonic": "LOADI",
+      "operand": 170,
+      "comment": "Cargar 0xAA en AC (llegamos por salto)"
+    },
+    {
+      "address": 31,
+      "instruction": "0x201C",
+      "mnemonic": "STORE",
+      "operand": 28,
+      "comment": "Guardar 0xAA en memoria[28]"
+    },
+    {
+      "address": 32,
+      "instruction": "0xF000",
+      "mnemonic": "HALT",
+      "operand": 0,
+      "comment": "Terminar ejecución"
+    }
+  ],
+
+  "data_section": {
+    "variables": {
+      "zero": {"address": 16, "value": 0},
+      "sum_zero": {"address": 17, "value": 0},
+      "value_255": {"address": 18, "value": 0},
+      "sum_510": {"address": 19, "value": 0},
+      "neg_32768": {"address": 20, "value": 0},
+      "neg_32767": {"address": 21, "value": 0},
+      "shifted_8000": {"address": 22, "value": 0},
+      "shifted_0": {"address": 23, "value": 0},
+      "after_jz_fail": {"address": 24, "value": 0},
+      "unused_25": {"address": 25, "value": 0},
+      "unused_26": {"address": 26, "value": 0},
+      "unused_27": {"address": 27, "value": 0},
+      "after_jz_success": {"address": 28, "value": 0}
+    }
+  },
+
+  "execution_info": {
+    "entry_point": 0,
+    "expected_result": {
+      "flags_progression": {
+        "step_3": {"Z": 1, "C": 0, "N": 0},
+        "step_6": {"Z": 0, "C": 0, "N": 0},
+        "step_9": {"Z": 0, "C": 1, "N": 0},
+        "step_11": {"Z": 0, "C": 0, "N": 1},
+        "step_17": {"Z": 0, "C": 0, "N": 1},
+        "step_19": {"Z": 1, "C": 1, "N": 0}
+      },
+      "memory_28": 170,
+      "jumps_executed": 1
+    }
+  }
+}

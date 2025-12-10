@@ -253,7 +253,7 @@ class System:
                 print(f"✗ Error cargando programa: {e}")
             return False
     
-    def run_program(self, mode: str = 'full', steps: int = 10, max_cycles: int = 1000) -> bool:
+    def run_program(self, mode: str = 'full', steps: int = 100, max_cycles: int = 1000) -> bool:
         """
         Ejecuta el programa cargado
         
@@ -285,7 +285,12 @@ class System:
                 
                 self.cpu.run_program(start_address=entry_point, max_cycles=max_cycles)
                 
+                # Mostrar estado final completo
                 print("\n" + "="*60)
+                print("ESTADO FINAL COMPLETO DE LA CPU")
+                print("="*60)
+                self._print_full_cpu_status()
+                print("="*60)
                 print("EJECUCIÓN COMPLETADA")
                 print("="*60)
                 
@@ -306,9 +311,8 @@ class System:
                     pc_after = self.cpu.registers.get_PC().get_Dec_Value()
                     instruction = self.cpu.registers.get_IR().get_Hex_Value()
                     
-                    print(f"PC: 0x{pc_before:04X} → 0x{pc_after:04X}")
-                    print(f"Instrucción: {instruction}")
-                    print(f"AC: {self.cpu.registers.get_AC().get_Hex_Value()}")
+                    # Mostrar estado completo de registros
+                    self._print_step_status(pc_before, pc_after, instruction, step + 1)
                     
                     # Verificar si se detuvo
                     if not self.cpu.running.get_value():
@@ -324,7 +328,75 @@ class System:
         except Exception as e:
             print(f"✗ Error ejecutando programa: {e}")
             return False
-    
+
+    def _print_step_status(self, pc_before, pc_after, instruction, step_num):
+        """Imprime el estado completo de registros en modo paso a paso"""
+        print(f"PC: 0x{pc_before:04X} → 0x{pc_after:04X}")
+        print(f"Instrucción: {instruction}")
+        
+        # Registros principales
+        print(f"\nREGISTROS PRINCIPALES:")
+        print(f"  AC: {self.cpu.registers.get_AC().get_Hex_Value()}")
+        print(f"  MAR: {self.cpu.registers.get_MAR().get_Hex_Value()}")
+        print(f"  MDR: {self.cpu.registers.get_MDR().get_Hex_Value()}")
+        print(f"  TEMP: {self.cpu.registers.get_TEMP().get_Hex_Value()}")
+        print(f"  IR: {self.cpu.registers.get_IR().get_Hex_Value()}")
+        
+        # Registros secuenciales
+        print(f"\nREGISTROS SECUENCIALES:")
+        print(f"  HI: {self.cpu.registers.get_HI().get_Hex_Value()}")
+        print(f"  LO: {self.cpu.registers.get_LO().get_Hex_Value()}")
+        print(f"  MD_CNT: {self.cpu.registers.get_MD_CNT().get_Hex_Value()}")
+        print(f"  MD_STATE: {self.cpu.registers.get_MD_STATE().get_Hex_Value()}")
+        
+        # Registros de control
+        print(f"\nREGISTROS DE CONTROL:")
+        print(f"  STEP_CNT: {self.cpu.registers.get_STEP_CNT().get_Hex_Value()}")
+        print(f"  OP_TYPE: {self.cpu.registers.get_OP_TYPE().get_Hex_Value()}")
+        print(f"  STATUS: {self.cpu.registers.get_STATUS().get_Hex_Value()}")
+        
+        # Banderas
+        print(f"\nBANDERAS:")
+        print(f"  Z (Zero): {self.cpu.registers.get_FLAG_Z().get_value()}")
+        print(f"  C (Carry): {self.cpu.registers.get_FLAG_C().get_value()}")
+        print(f"  N (Negative): {self.cpu.registers.get_FLAG_N().get_value()}")
+
+    def _print_full_cpu_status(self):
+        """Imprime el estado completo de la CPU"""
+        # Registros principales
+        print(f"\nREGISTROS PRINCIPALES:")
+        print(f"  PC: {self.cpu.registers.get_PC().get_Hex_Value()}")
+        print(f"  AC: {self.cpu.registers.get_AC().get_Hex_Value()}")
+        print(f"  IR: {self.cpu.registers.get_IR().get_Hex_Value()}")
+        print(f"  MAR: {self.cpu.registers.get_MAR().get_Hex_Value()}")
+        print(f"  MDR: {self.cpu.registers.get_MDR().get_Hex_Value()}")
+        print(f"  TEMP: {self.cpu.registers.get_TEMP().get_Hex_Value()}")
+        
+        # Registros secuenciales
+        print(f"\nREGISTROS SECUENCIALES:")
+        print(f"  HI: {self.cpu.registers.get_HI().get_Hex_Value()}")
+        print(f"  LO: {self.cpu.registers.get_LO().get_Hex_Value()}")
+        print(f"  MD_CNT: {self.cpu.registers.get_MD_CNT().get_Hex_Value()}")
+        print(f"  MD_STATE: {self.cpu.registers.get_MD_STATE().get_Hex_Value()}")
+        
+        # Registros de control
+        print(f"\nREGISTROS DE CONTROL:")
+        print(f"  STEP_CNT: {self.cpu.registers.get_STEP_CNT().get_Hex_Value()}")
+        print(f"  OP_TYPE: {self.cpu.registers.get_OP_TYPE().get_Hex_Value()}")
+        print(f"  STATUS: {self.cpu.registers.get_STATUS().get_Hex_Value()}")
+        
+        # Banderas
+        print(f"\nBANDERAS:")
+        print(f"  Z (Zero): {self.cpu.registers.get_FLAG_Z().get_value()}")
+        print(f"  C (Carry): {self.cpu.registers.get_FLAG_C().get_value()}")
+        print(f"  N (Negative): {self.cpu.registers.get_FLAG_N().get_value()}")
+        
+        # Estado de ejecución
+        print(f"\nESTADO DE EJECUCIÓN:")
+        print(f"  Ciclos: {self.cpu.clock_cycle}")
+        print(f"  Instrucciones ejecutadas: {self.cpu.instructions_executed}")
+        print(f"  CPU en ejecución: {'Sí' if self.cpu.running.get_value() else 'No'}")
+        
     def get_system_status(self) -> Dict[str, Any]:
         """Obtiene el estado completo del sistema"""
         if not self.assembled:

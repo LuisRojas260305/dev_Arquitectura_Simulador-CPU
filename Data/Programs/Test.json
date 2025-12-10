@@ -1,11 +1,11 @@
 {
   "metadata": {
-    "name": "Prueba Completa ISA",
+    "name": "Prueba Completa ISA Extendido",
     "author": "CPU Simulator",
-    "description": "Prueba completa de todas las instrucciones del ISA estandarizado",
+    "description": "Prueba de todas las instrucciones incluyendo MOVLO/MOVHI",
     "created": "2024-12-06",
-    "format_version": "2.0",
-    "isa_version": "1.0"
+    "format_version": "3.0",
+    "isa_version": "1.1"
   },
 
   "program": [
@@ -14,14 +14,14 @@
       "instruction": "0x9005",
       "mnemonic": "LOADI",
       "operand": 5,
-      "comment": "Cargar 5 en AC (LOADI 0x9)"
+      "comment": "Cargar 5 en AC"
     },
     {
       "address": 1,
       "instruction": "0x2010",
       "mnemonic": "STORE",
       "operand": 16,
-      "comment": "Guardar AC en dirección 0x010 (STORE 0x2)"
+      "comment": "Guardar AC en dirección 16"
     },
     {
       "address": 2,
@@ -35,7 +35,7 @@
       "instruction": "0x3010",
       "mnemonic": "ADD",
       "operand": 16,
-      "comment": "AC + memoria[16] = 3+5=8 (ADD 0x3)"
+      "comment": "AC + memoria[16] = 3+5=8"
     },
     {
       "address": 4,
@@ -46,49 +46,55 @@
     },
     {
       "address": 5,
-      "instruction": "0x4011",
-      "mnemonic": "SUB",
+      "instruction": "0x5011",
+      "mnemonic": "MULT",
       "operand": 17,
-      "comment": "AC - memoria[17] = 8-8=0 (SUB 0x4)"
+      "comment": "AC × memoria[17] = 8×8=64 -> AC=64"
     },
     {
       "address": 6,
-      "instruction": "0xA010",
-      "mnemonic": "AND",
-      "operand": 16,
-      "comment": "AC AND memoria[16] = 0 AND 5 = 0 (AND 0xA)"
+      "instruction": "0x1100",
+      "mnemonic": "MOVHI",
+      "operand": 0,
+      "comment": "Mover HI a AC (probando MOVHI)"
     },
     {
       "address": 7,
-      "instruction": "0xD001",
-      "mnemonic": "SHL",
-      "operand": 1,
-      "comment": "Shift Left 1 posición (SHL 0xD)"
+      "instruction": "0x1000",
+      "mnemonic": "MOVLO",
+      "operand": 0,
+      "comment": "Mover LO a AC (probando MOVLO)"
     },
     {
       "address": 8,
+      "instruction": "0xD001",
+      "mnemonic": "SHL",
+      "operand": 1,
+      "comment": "Shift Left 1 posición"
+    },
+    {
+      "address": 9,
       "instruction": "0xF000",
       "mnemonic": "HALT",
       "operand": 0,
-      "comment": "Detener CPU (HALT 0xF)"
+      "comment": "Detener CPU"
     }
   ],
   
   "data_section": {
     "variables": {
-      "valor1": {"address": 16, "value": 0, "description": "Almacena el valor 5"},
-      "resultado": {"address": 17, "value": 0, "description": "Almacena resultado de operaciones"}
+      "valor1": {"address": 16, "value": 0},
+      "resultado": {"address": 17, "value": 0}
     }
   },
   
   "execution_info": {
     "entry_point": 0,
-    "stack_pointer": 4080,
     "expected_result": {
-      "AC": 0,
-      "flags": {"Z": 1, "C": 0, "N": 0},
-      "memory_16": 5,
-      "memory_17": 8
+      "final_AC": 128,  # 64 << 1
+      "LO": 64,
+      "HI": 0,
+      "flags": {"Z": 0, "C": 0, "N": 0}
     }
   }
 }

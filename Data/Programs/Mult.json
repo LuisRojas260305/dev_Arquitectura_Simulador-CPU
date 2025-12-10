@@ -1,11 +1,11 @@
 {
   "metadata": {
-    "name": "Prueba Multiplicación",
+    "name": "Prueba Multiplicación Completa",
     "author": "CPU Simulator",
-    "description": "Multiplicación de 6 × 7 = 42 usando ISA estandarizado",
+    "description": "Multiplicación de 6 × 7 = 42 con almacenamiento completo de resultado",
     "created": "2025-12-10",
-    "format_version": "2.0",
-    "isa_version": "1.0"
+    "format_version": "3.0",
+    "isa_version": "1.1"
   },
 
   "program": [
@@ -25,10 +25,10 @@
     },
     {
       "address": 2,
-      "instruction": "0x9007",
+      "instruction": "0x0000",
       "mnemonic": "LOADI",
-      "operand": 7,
-      "comment": "Cargar 7 en AC (operando B)"
+      "operand": 0,
+      "comment": "Cargar 0 en AC (operando B)"
     },
     {
       "address": 3,
@@ -49,24 +49,31 @@
       "instruction": "0x5011",
       "mnemonic": "MULT",
       "operand": 17,
-      "comment": "Multiplicar AC × memoria[17] (MULT 0x5)"
+      "comment": "Multiplicar AC × memoria[17] (MULT 0x5) -> AC=LO=42"
     },
     {
       "address": 6,
       "instruction": "0x2012",
       "mnemonic": "STORE",
       "operand": 18,
-      "comment": "Guardar LO (parte baja) en memoria[18]"
+      "comment": "Guardar LO (42) en memoria[18] desde AC"
     },
     {
       "address": 7,
-      "instruction": "0x2013",
-      "mnemonic": "STORE",
-      "operand": 19,
-      "comment": "Guardar HI (parte alta) en memoria[19]"
+      "instruction": "0x1100",
+      "mnemonic": "MOVHI",
+      "operand": 0,
+      "comment": "Mover HI a AC (MOVHI 0x11)"
     },
     {
       "address": 8,
+      "instruction": "0x2013",
+      "mnemonic": "STORE",
+      "operand": 19,
+      "comment": "Guardar HI (0) en memoria[19]"
+    },
+    {
+      "address": 9,
       "instruction": "0xF000",
       "mnemonic": "HALT",
       "operand": 0,
@@ -76,18 +83,19 @@
 
   "data_section": {
     "variables": {
-      "opA": {"address": 16, "value": 0, "description": "Operando A (6)"},
-      "opB": {"address": 17, "value": 0, "description": "Operando B (7)"},
-      "result_LO": {"address": 18, "value": 0, "description": "Parte baja del resultado (42)"},
-      "result_HI": {"address": 19, "value": 0, "description": "Parte alta del resultado (0)"}
+      "opA": {"address": 16, "value": 0},
+      "opB": {"address": 17, "value": 0},
+      "result_LO": {"address": 18, "value": 0},
+      "result_HI": {"address": 19, "value": 0}
     }
   },
 
   "execution_info": {
     "entry_point": 0,
     "expected_result": {
-      "HI": 0,
+      "AC_after_MULT": 42,
       "LO": 42,
+      "HI": 0,
       "memory_18": 42,
       "memory_19": 0,
       "flags": {"Z": 0, "C": 0, "N": 0}

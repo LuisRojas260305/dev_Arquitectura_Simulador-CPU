@@ -311,7 +311,7 @@ class ROM:
         except Exception as e:
             print(f"✗ Error guardando log: {e}")
     
-    def run_program(self, mode: str = 'full', steps: int = 10, max_cycles: int = 1000) -> bool:
+    def run_program(self, mode: str = 'full', steps: int = 100, max_cycles: int = 1000) -> bool:
         """
         Ejecuta el programa cargado
         

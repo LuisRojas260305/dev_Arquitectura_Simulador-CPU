@@ -183,8 +183,8 @@ def main_menu():
                 print_header("EJECUTAR PROGRAMA (PASO A PASO)")
                 
                 try:
-                    steps = input("Número de pasos a ejecutar [10]: ").strip()
-                    steps = int(steps) if steps else 10
+                    steps = input("Número de pasos a ejecutar [100]: ").strip()
+                    steps = int(steps) if steps else 100
                     
                     rom.run_program(mode='step', steps=steps)
                 except ValueError:

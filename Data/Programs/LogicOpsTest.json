@@ -1,0 +1,264 @@
+{
+  "metadata": {
+    "name": "Test de Operaciones Lógicas y Control",
+    "author": "CPU Simulator",
+    "description": "Prueba operaciones AND, OR, XOR y registros de control",
+    "created": "2025-12-10",
+    "format_version": "3.0",
+    "isa_version": "1.1"
+  },
+
+  "program": [
+    {
+      "address": 0,
+      "instruction": "0x90F0",
+      "mnemonic": "LOADI",
+      "operand": 240,
+      "comment": "Cargar 0xF0 (11110000) en AC"
+    },
+    {
+      "address": 1,
+      "instruction": "0x2010",
+      "mnemonic": "STORE",
+      "operand": 16,
+      "comment": "Guardar 0xF0 en memoria[16]"
+    },
+    {
+      "address": 2,
+      "instruction": "0x900F",
+      "mnemonic": "LOADI",
+      "operand": 15,
+      "comment": "Cargar 0x0F (00001111) en AC"
+    },
+    {
+      "address": 3,
+      "instruction": "0x2011",
+      "mnemonic": "STORE",
+      "operand": 17,
+      "comment": "Guardar 0x0F en memoria[17]"
+    },
+    {
+      "address": 4,
+      "instruction": "0x1010",
+      "mnemonic": "LOAD",
+      "operand": 16,
+      "comment": "Cargar 0xF0 en AC"
+    },
+    {
+      "address": 5,
+      "instruction": "0xA011",
+      "mnemonic": "AND",
+      "operand": 17,
+      "comment": "0xF0 AND 0x0F = 0x00 (Z=1)"
+    },
+    {
+      "address": 6,
+      "instruction": "0x2012",
+      "mnemonic": "STORE",
+      "operand": 18,
+      "comment": "Guardar 0x00 en memoria[18]"
+    },
+    {
+      "address": 7,
+      "instruction": "0x1010",
+      "mnemonic": "LOAD",
+      "operand": 16,
+      "comment": "Cargar 0xF0 en AC"
+    },
+    {
+      "address": 8,
+      "instruction": "0xB011",
+      "mnemonic": "OR",
+      "operand": 17,
+      "comment": "0xF0 OR 0x0F = 0xFF (Z=0)"
+    },
+    {
+      "address": 9,
+      "instruction": "0x2013",
+      "mnemonic": "STORE",
+      "operand": 19,
+      "comment": "Guardar 0xFF en memoria[19]"
+    },
+    {
+      "address": 10,
+      "instruction": "0x1010",
+      "mnemonic": "LOAD",
+      "operand": 16,
+      "comment": "Cargar 0xF0 en AC"
+    },
+    {
+      "address": 11,
+      "instruction": "0xC011",
+      "mnemonic": "XOR",
+      "operand": 17,
+      "comment": "0xF0 XOR 0x0F = 0xFF (Z=0)"
+    },
+    {
+      "address": 12,
+      "instruction": "0x2014",
+      "mnemonic": "STORE",
+      "operand": 20,
+      "comment": "Guardar 0xFF en memoria[20]"
+    },
+    {
+      "address": 13,
+      "instruction": "0x9055",
+      "mnemonic": "LOADI",
+      "operand": 85,
+      "comment": "Cargar 0x55 (01010101) en AC"
+    },
+    {
+      "address": 14,
+      "instruction": "0x2015",
+      "mnemonic": "STORE",
+      "operand": 21,
+      "comment": "Guardar 0x55 en memoria[21]"
+    },
+    {
+      "address": 15,
+      "instruction": "0x90AA",
+      "mnemonic": "LOADI",
+      "operand": 170,
+      "comment": "Cargar 0xAA (10101010) en AC"
+    },
+    {
+      "address": 16,
+      "instruction": "0xC015",
+      "mnemonic": "XOR",
+      "operand": 21,
+      "comment": "0xAA XOR 0x55 = 0xFF"
+    },
+    {
+      "address": 17,
+      "instruction": "0x2016",
+      "mnemonic": "STORE",
+      "operand": 22,
+      "comment": "Guardar 0xFF en memoria[22]"
+    },
+    {
+      "address": 18,
+      "instruction": "0x90FF",
+      "mnemonic": "LOADI",
+      "operand": 255,
+      "comment": "Cargar 0xFF en AC"
+    },
+    {
+      "address": 19,
+      "instruction": "0xA016",
+      "mnemonic": "AND",
+      "operand": 22,
+      "comment": "0xFF AND 0xFF = 0xFF"
+    },
+    {
+      "address": 20,
+      "instruction": "0xB015",
+      "mnemonic": "OR",
+      "operand": 21,
+      "comment": "0xFF OR 0x55 = 0xFF"
+    },
+    {
+      "address": 21,
+      "instruction": "0x2017",
+      "mnemonic": "STORE",
+      "operand": 23,
+      "comment": "Guardar resultado en memoria[23]"
+    },
+    {
+      "address": 22,
+      "instruction": "0x9003",
+      "mnemonic": "LOADI",
+      "operand": 3,
+      "comment": "Cargar 3 en AC"
+    },
+    {
+      "address": 23,
+      "instruction": "0xD002",
+      "mnemonic": "SHL",
+      "operand": 2,
+      "comment": "3 << 2 = 12 (0x0C)"
+    },
+    {
+      "address": 24,
+      "instruction": "0x2018",
+      "mnemonic": "STORE",
+      "operand": 24,
+      "comment": "Guardar 12 en memoria[24]"
+    },
+    {
+      "address": 25,
+      "instruction": "0xE001",
+      "mnemonic": "SHR",
+      "operand": 1,
+      "comment": "12 >> 1 = 6 (0x06)"
+    },
+    {
+      "address": 26,
+      "instruction": "0x2019",
+      "mnemonic": "STORE",
+      "operand": 25,
+      "comment": "Guardar 6 en memoria[25]"
+    },
+    {
+      "address": 27,
+      "instruction": "0x9008",
+      "mnemonic": "LOADI",
+      "operand": 8,
+      "comment": "Cargar 8 en AC"
+    },
+    {
+      "address": 28,
+      "instruction": "0xD003",
+      "mnemonic": "SHL",
+      "operand": 3,
+      "comment": "8 << 3 = 64 (0x40)"
+    },
+    {
+      "address": 29,
+      "instruction": "0xE002",
+      "mnemonic": "SHR",
+      "operand": 2,
+      "comment": "64 >> 2 = 16 (0x10)"
+    },
+    {
+      "address": 30,
+      "instruction": "0x201A",
+      "mnemonic": "STORE",
+      "operand": 26,
+      "comment": "Guardar 16 en memoria[26]"
+    },
+    {
+      "address": 31,
+      "instruction": "0xF000",
+      "mnemonic": "HALT",
+      "operand": 0,
+      "comment": "Terminar ejecución"
+    }
+  ],
+
+  "data_section": {
+    "variables": {
+      "mask_f0": {"address": 16, "value": 0},
+      "mask_0f": {"address": 17, "value": 0},
+      "and_result": {"address": 18, "value": 0},
+      "or_result": {"address": 19, "value": 0},
+      "xor_result1": {"address": 20, "value": 0},
+      "value_55": {"address": 21, "value": 0},
+      "xor_result2": {"address": 22, "value": 0},
+      "logic_chain": {"address": 23, "value": 0},
+      "shift_left": {"address": 24, "value": 0},
+      "shift_right": {"address": 25, "value": 0},
+      "shift_combo": {"address": 26, "value": 0}
+    }
+  },
+
+  "execution_info": {
+    "entry_point": 0,
+    "expected_result": {
+      "and_result": 0,
+      "or_result": 255,
+      "xor_results": [255, 255],
+      "shift_results": [12, 6, 16],
+      "final_flags": {"Z": 0, "C": 0, "N": 0}
+    }
+  }
+}

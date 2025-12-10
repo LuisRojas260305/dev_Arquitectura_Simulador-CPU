@@ -1,6 +1,7 @@
 # Simulador de CPU — Arquitectura Modular
 
 Simulador educativo de una CPU de 16 bits con arquitectura modular (ALU, RAM, ROM, Bus, Ensamblador). Permite ensamblar una configuración de sistema, cargar programas de ejemplo, ejecutar pruebas y simular la ejecución de programas paso a paso o completa desde una interfaz de consola.
+El enfoque de este proyecto fue replicar lo mas fiel a la realidad una CPU con un bus de 16bits, montando desde la unidad basica que serian las compuertas logicas, y usandolas para montar los cirucitos mas complejos que dan vida a una cpu
 
 Versión: 1.0
 
@@ -12,31 +13,31 @@ Versión: 1.0
 ├── 📁 Business
 │   ├── 📁 Basic_Components
 │   │   ├── 📁 Logic_Gates
-│   │   │   ├── 🐍 AND_Gate.py
-│   │   │   ├── 🐍 AND_Gate_4.py
-│   │   │   ├── 🐍 NOT_Gate.py
-│   │   │   ├── 🐍 OR_Gate.py
-│   │   │   ├── 🐍 OR_Gate_8.py
-│   │   │   ├── 🐍 XOR_Gate.py
+│   │   │   ├── 🐍 AND_Gate.py # Mio
+│   │   │   ├── 🐍 AND_Gate_4.py # ia
+│   │   │   ├── 🐍 NOT_Gate.py # Mio
+│   │   │   ├── 🐍 OR_Gate.py # Mio
+│   │   │   ├── 🐍 OR_Gate_8.py # ia
+│   │   │   ├── 🐍 XOR_Gate.py # mio
 │   │   │   └── 🐍 __init__.py
-│   │   ├── 🐍 Bit.py
-│   │   ├── 🐍 Bus.py
-│   │   ├── 🐍 Logic_Gate.py
-│   │   ├── 🐍 MUX3to1.py
-│   │   ├── 🐍 MUX4to1.py
-│   │   ├── 🐍 Record.py
+│   │   ├── 🐍 Bit.py # Mio
+│   │   ├── 🐍 Bus.py # Mio
+│   │   ├── 🐍 Logic_Gate.py # ia
+│   │   ├── 🐍 MUX3to1.py # ia
+│   │   ├── 🐍 MUX4to1.py # ia
+│   │   ├── 🐍 Record.py # mio
 │   │   └── 🐍 __init__.py
 │   ├── 📁 CPU_Core
-│   │   ├── 📁 Arithmetic_Logical_Unit
-│   │   │   ├── 📁 Arithmetic_Unit
+│   │   ├── 📁 Arithmetic_Logical_Unit # Una mezcla de mano propia, e ia para corregir errores y hacer codigo repetitivo
+│   │   │   ├── 📁 Arithmetic_Unit    
 │   │   │   │   ├── 🐍 Arithmetic_Unit.py
 │   │   │   │   ├── 🐍 Full_Adder.py
 │   │   │   │   └── 🐍 __init__.py
-│   │   │   ├── 📁 Logical_Unit
+│   │   │   ├── 📁 Logical_Unit 
 │   │   │   │   ├── 🐍 Logical_MUX.py
 │   │   │   │   ├── 🐍 Logical_Unit.py
 │   │   │   │   └── 🐍 __init__.py
-│   │   │   ├── 📁 Shift_Unit
+│   │   │   ├── 📁 Shift_Unit # sobretodo aqui con los motores de desplazamiento, yo hice el lsl, y en base a ese pedi que hiciera los demas
 │   │   │   │   ├── 🐍 ASR.py
 │   │   │   │   ├── 🐍 LSL.py
 │   │   │   │   ├── 🐍 LSR.py
@@ -50,18 +51,18 @@ Versión: 1.0
 │   │   │   ├── 🐍 ALU.py
 │   │   │   ├── 🐍 ALU_MUX.py
 │   │   │   └── 🐍 __init__.py
-│   │   ├── 📁 Control_Unit
+│   │   ├── 📁 Control_Unit # Esta parte si la hizo la ia en su totalidad, ya que no entendia bien que se conectaba con que
 │   │   │   ├── 🐍 ControlStore.py
 │   │   │   ├── 🐍 Control_Unit.py
 │   │   │   ├── 🐍 Decoder.py
 │   │   │   ├── 🐍 FSM.py
 │   │   │   ├── 🐍 MicroCounter.py
-│   │   │   ├── 🐍 Record_Bank.py
+│   │   │   ├── 🐍 Record_Bank.py # exepto esto, esto lo hice yo a mano
 │   │   │   ├── 🐍 SignalGenerator.py
 │   │   │   └── 🐍 __init__.py
 │   │   ├── 🐍 CPU.py
 │   │   └── 🐍 __init__.py
-│   ├── 📁 Memory
+│   ├── 📁 Memory # ia
 │   │   ├── 🐍 RAM.py
 │   │   ├── 🐍 ROM.py
 │   │   ├── 🐍 SystemBus.py
@@ -85,7 +86,7 @@ Versión: 1.0
 ├── 📁 assets
 │   └── 📁 Compuertas
 ├── 📁 data
-├── 📁 docs
+├── 📁 docs # aqui esta algo de lo que iba investigando, sobretodo como eran algunos circuitos
 │   ├── 📝 # File Tree: CPU_Simulator.md
 │   ├── 📝 ALU_Mapeo_Control.md
 │   ├── 🖼️ Esquema Full Adder.png
@@ -101,6 +102,8 @@ Versión: 1.0
 ├── 📄 requirements.txt
 ├── 🐍 setup.py
 └── 🐍 test.py
+
+# Este informe tambien use ia, ya que lo hice hoy, lo que puedo decir que es "propio" es el diagrama de clases, que lo hice en uml y despues pedi que me lo cambiara a mermaid
 ```
 ---
 
@@ -394,9 +397,9 @@ classDiagram
 
 ## Clases y módulos principales (explicación)
 
-Clases/módulos conocidos y sus responsabilidades (según uso en `main.py`):
+Clases/módulos y sus responsabilidades (según uso en `main.py`):
 
-- Business.Memory.ROM.RO M
+- Business.Memory.ROM
   - Responsabilidad: punto de entrada para ensamblar/configurar el sistema y gestionar programas y pruebas.
   - Métodos detectados (usados por el menú):
     - create_system_assembler(config) — Prepara el ensamblador/sistema con la configuración opcional.
@@ -409,7 +412,7 @@ Clases/módulos conocidos y sus responsabilidades (según uso en `main.py`):
     - run_program(mode='step'|'full', steps=None, max_cycles=None) — Ejecuta el programa cargado en modo paso a paso o completo.
     - get_test_history(n) → list — Devuelve las últimas n entradas del historial de pruebas.
 
-Módulos esperados en Business (arquitectura lógica):
+Módulos en Business (arquitectura lógica):
 - CPU
   - Registros (PC, ACC, otros registros generales), lógica de ciclo de instrucción y control.
 - ALU
@@ -814,3 +817,4 @@ Formato de programas
 - Ejecutar programa completo con máximo 500 ciclos:
   - 8 → ingresar `500`
 
+--

@@ -1,11 +1,11 @@
 {
   "metadata": {
-    "name": "Prueba División",
+    "name": "Prueba División Completa",
     "author": "CPU Simulator",
-    "description": "División de 84 ÷ 7 = 12 con resto 0 usando ISA estandarizado",
+    "description": "División de 84 ÷ 7 = 12 con resto 0",
     "created": "2025-12-10",
-    "format_version": "2.0",
-    "isa_version": "1.0"
+    "format_version": "3.0",
+    "isa_version": "1.1"
   },
 
   "program": [
@@ -49,24 +49,31 @@
       "instruction": "0x6015",
       "mnemonic": "DIV",
       "operand": 21,
-      "comment": "Dividir AC entre memoria[21] (DIV 0x6)"
+      "comment": "Dividir AC entre memoria[21] (DIV 0x6) -> AC=LO=12"
     },
     {
       "address": 6,
       "instruction": "0x2016",
       "mnemonic": "STORE",
       "operand": 22,
-      "comment": "Guardar cociente (LO) en memoria[22]"
+      "comment": "Guardar cociente (12) en memoria[22] desde AC"
     },
     {
       "address": 7,
-      "instruction": "0x2017",
-      "mnemonic": "STORE",
-      "operand": 23,
-      "comment": "Guardar resto (HI) en memoria[23]"
+      "instruction": "0x1100",
+      "mnemonic": "MOVHI",
+      "operand": 0,
+      "comment": "Mover HI (resto) a AC (MOVHI 0x11)"
     },
     {
       "address": 8,
+      "instruction": "0x2017",
+      "mnemonic": "STORE",
+      "operand": 23,
+      "comment": "Guardar resto (0) en memoria[23]"
+    },
+    {
+      "address": 9,
       "instruction": "0xF000",
       "mnemonic": "HALT",
       "operand": 0,
@@ -76,16 +83,17 @@
 
   "data_section": {
     "variables": {
-      "dividendo": {"address": 20, "value": 0, "description": "Dividendo (84)"},
-      "divisor": {"address": 21, "value": 0, "description": "Divisor (7)"},
-      "cociente": {"address": 22, "value": 0, "description": "Cociente esperado (12)"},
-      "resto": {"address": 23, "value": 0, "description": "Resto esperado (0)"}
+      "dividendo": {"address": 20, "value": 0},
+      "divisor": {"address": 21, "value": 0},
+      "cociente": {"address": 22, "value": 0},
+      "resto": {"address": 23, "value": 0}
     }
   },
 
   "execution_info": {
     "entry_point": 0,
     "expected_result": {
+      "AC_after_DIV": 12,
       "LO": 12,
       "HI": 0,
       "memory_22": 12,

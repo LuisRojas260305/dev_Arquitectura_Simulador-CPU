@@ -384,18 +384,32 @@ class CPU:
         print(f"Ciclos: {self.clock_cycle}, Instrucciones: {self.instructions_executed}")
         
     def get_status(self):
-        """Retorna el estado actual de la CPU"""
+        """Retorna el estado actual de la CPU con TODOS los registros"""
         return {
             'running': self.running.get_value(),
             'clock_cycle': self.clock_cycle,
             'instructions': self.instructions_executed,
+            
+            # Registros principales
             'pc': self.registers.get_PC().get_Hex_Value(),
             'ir': self.registers.get_IR().get_Hex_Value(),
             'ac': self.registers.get_AC().get_Hex_Value(),
             'mar': self.registers.get_MAR().get_Hex_Value(),
             'mdr': self.registers.get_MDR().get_Hex_Value(),
+            'temp': self.registers.get_TEMP().get_Hex_Value(),
+            
+            # Registros secuenciales
             'hi': self.registers.get_HI().get_Hex_Value(),
             'lo': self.registers.get_LO().get_Hex_Value(),
+            'md_cnt': self.registers.get_MD_CNT().get_Hex_Value(),
+            'md_state': self.registers.get_MD_STATE().get_Hex_Value(),
+            
+            # Registros de control
+            'step_cnt': self.registers.get_STEP_CNT().get_Hex_Value(),
+            'op_type': self.registers.get_OP_TYPE().get_Hex_Value(),
+            'status': self.registers.get_STATUS().get_Hex_Value(),
+            
+            # Banderas
             'flags': {
                 'Z': self.registers.get_FLAG_Z().get_value(),
                 'C': self.registers.get_FLAG_C().get_value(),

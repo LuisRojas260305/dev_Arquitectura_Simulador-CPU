@@ -1,0 +1,385 @@
+{
+  "metadata": {
+    "name": "Test de Estrés de Registros",
+    "author": "CPU Simulator",
+    "description": "Prueba intensiva de todos los registros mediante operaciones encadenadas",
+    "created": "2025-12-10",
+    "format_version": "3.0",
+    "isa_version": "1.1"
+  },
+
+  "program": [
+    {
+      "address": 0,
+      "instruction": "0x9001",
+      "mnemonic": "LOADI",
+      "operand": 1,
+      "comment": "Inicializar AC = 1"
+    },
+    {
+      "address": 1,
+      "instruction": "0x2010",
+      "mnemonic": "STORE",
+      "operand": 16,
+      "comment": "Guardar 1 en memoria[16] (contador)"
+    },
+    {
+      "address": 2,
+      "instruction": "0x9002",
+      "mnemonic": "LOADI",
+      "operand": 2,
+      "comment": "Cargar 2 en AC"
+    },
+    {
+      "address": 3,
+      "instruction": "0x2011",
+      "mnemonic": "STORE",
+      "operand": 17,
+      "comment": "Guardar 2 en memoria[17]"
+    },
+    {
+      "address": 4,
+      "instruction": "0x9003",
+      "mnemonic": "LOADI",
+      "operand": 3,
+      "comment": "Cargar 3 en AC"
+    },
+    {
+      "address": 5,
+      "instruction": "0x2012",
+      "mnemonic": "STORE",
+      "operand": 18,
+      "comment": "Guardar 3 en memoria[18]"
+    },
+    {
+      "address": 6,
+      "instruction": "0x1010",
+      "mnemonic": "LOAD",
+      "operand": 16,
+      "comment": "Cargar contador (1) en AC"
+    },
+    {
+      "address": 7,
+      "instruction": "0x3011",
+      "mnemonic": "ADD",
+      "operand": 17,
+      "comment": "1 + 2 = 3"
+    },
+    {
+      "address": 8,
+      "instruction": "0x3012",
+      "mnemonic": "ADD",
+      "operand": 18,
+      "comment": "3 + 3 = 6"
+    },
+    {
+      "address": 9,
+      "instruction": "0x2013",
+      "mnemonic": "STORE",
+      "operand": 19,
+      "comment": "Guardar 6 en memoria[19] (acumulador)"
+    },
+    {
+      "address": 10,
+      "instruction": "0x1013",
+      "mnemonic": "LOAD",
+      "operand": 19,
+      "comment": "Cargar acumulador (6) en AC"
+    },
+    {
+      "address": 11,
+      "instruction": "0x5011",
+      "mnemonic": "MULT",
+      "operand": 17,
+      "comment": "6 × 2 = 12 (HI:LO=12, AC=6)"
+    },
+    {
+      "address": 12,
+      "instruction": "0x1013",
+      "mnemonic": "LOAD",
+      "operand": 19,
+      "comment": "Recargar acumulador (6) en AC"
+    },
+    {
+      "address": 13,
+      "instruction": "0x6012",
+      "mnemonic": "DIV",
+      "operand": 18,
+      "comment": "6 ÷ 3 = 2 (LO=2, HI=0, AC=6)"
+    },
+    {
+      "address": 14,
+      "instruction": "0x1010",
+      "mnemonic": "LOAD",
+      "operand": 16,
+      "comment": "Cargar contador (1) en AC"
+    },
+    {
+      "address": 15,
+      "instruction": "0x3011",
+      "mnemonic": "ADD",
+      "operand": 17,
+      "comment": "1 + 2 = 3"
+    },
+    {
+      "address": 16,
+      "instruction": "0xD001",
+      "mnemonic": "SHL",
+      "operand": 1,
+      "comment": "3 << 1 = 6"
+    },
+    {
+      "address": 17,
+      "instruction": "0x4012",
+      "mnemonic": "SUB",
+      "operand": 18,
+      "comment": "6 - 3 = 3"
+    },
+    {
+      "address": 18,
+      "instruction": "0x2014",
+      "mnemonic": "STORE",
+      "operand": 20,
+      "comment": "Guardar 3 en memoria[20]"
+    },
+    {
+      "address": 19,
+      "instruction": "0x1014",
+      "mnemonic": "LOAD",
+      "operand": 20,
+      "comment": "Cargar 3 en AC"
+    },
+    {
+      "address": 20,
+      "instruction": "0xA011",
+      "mnemonic": "AND",
+      "operand": 17,
+      "comment": "3 AND 2 = 2"
+    },
+    {
+      "address": 21,
+      "instruction": "0xB012",
+      "mnemonic": "OR",
+      "operand": 18,
+      "comment": "2 OR 3 = 3"
+    },
+    {
+      "address": 22,
+      "instruction": "0xC010",
+      "mnemonic": "XOR",
+      "operand": 16,
+      "comment": "3 XOR 1 = 2"
+    },
+    {
+      "address": 23,
+      "instruction": "0x2015",
+      "mnemonic": "STORE",
+      "operand": 21,
+      "comment": "Guardar 2 en memoria[21]"
+    },
+    {
+      "address": 24,
+      "instruction": "0x1015",
+      "mnemonic": "LOAD",
+      "operand": 21,
+      "comment": "Cargar 2 en AC"
+    },
+    {
+      "address": 25,
+      "instruction": "0x3012",
+      "mnemonic": "ADD",
+      "operand": 18,
+      "comment": "2 + 3 = 5"
+    },
+    {
+      "address": 26,
+      "instruction": "0x3010",
+      "mnemonic": "ADD",
+      "operand": 16,
+      "comment": "5 + 1 = 6"
+    },
+    {
+      "address": 27,
+      "instruction": "0x3011",
+      "mnemonic": "ADD",
+      "operand": 17,
+      "comment": "6 + 2 = 8"
+    },
+    {
+      "address": 28,
+      "instruction": "0x3012",
+      "mnemonic": "ADD",
+      "operand": 18,
+      "comment": "8 + 3 = 11"
+    },
+    {
+      "address": 29,
+      "instruction": "0x2016",
+      "mnemonic": "STORE",
+      "operand": 22,
+      "comment": "Guardar 11 en memoria[22]"
+    },
+    {
+      "address": 30,
+      "instruction": "0x1016",
+      "mnemonic": "LOAD",
+      "operand": 22,
+      "comment": "Cargar 11 en AC"
+    },
+    {
+      "address": 31,
+      "instruction": "0xE002",
+      "mnemonic": "SHR",
+      "operand": 2,
+      "comment": "11 >> 2 = 2"
+    },
+    {
+      "address": 32,
+      "instruction": "0x2017",
+      "mnemonic": "STORE",
+      "operand": 23,
+      "comment": "Guardar 2 en memoria[23]"
+    },
+    {
+      "address": 33,
+      "instruction": "0x1010",
+      "mnemonic": "LOAD",
+      "operand": 16,
+      "comment": "Cargar 1 en AC"
+    },
+    {
+      "address": 34,
+      "instruction": "0x8000",
+      "mnemonic": "JZ",
+      "operand": 0,
+      "comment": "Salto si Z=1 (no salta)"
+    },
+    {
+      "address": 35,
+      "instruction": "0x1017",
+      "mnemonic": "LOAD",
+      "operand": 23,
+      "comment": "Cargar 2 en AC"
+    },
+    {
+      "address": 36,
+      "instruction": "0x9000",
+      "mnemonic": "LOADI",
+      "operand": 0,
+      "comment": "Cargar 0 en AC (Z=1)"
+    },
+    {
+      "address": 37,
+      "instruction": "0x8000",
+      "mnemonic": "JZ",
+      "operand": 40,
+      "comment": "Salto si Z=1 (salta a 40)"
+    },
+    {
+      "address": 38,
+      "instruction": "0x2018",
+      "mnemonic": "STORE",
+      "operand": 24,
+      "comment": "NO se ejecuta (saltado)"
+    },
+    {
+      "address": 39,
+      "instruction": "0x2019",
+      "mnemonic": "STORE",
+      "operand": 25,
+      "comment": "NO se ejecuta (saltado)"
+    },
+    {
+      "address": 40,
+      "instruction": "0x90FF",
+      "mnemonic": "LOADI",
+      "operand": 255,
+      "comment": "Cargar 255 en AC (llegamos por salto)"
+    },
+    {
+      "address": 41,
+      "instruction": "0x201A",
+      "mnemonic": "STORE",
+      "operand": 26,
+      "comment": "Guardar 255 en memoria[26]"
+    },
+    {
+      "address": 42,
+      "instruction": "0x101A",
+      "mnemonic": "LOAD",
+      "operand": 26,
+      "comment": "Cargar 255 en AC"
+    },
+    {
+      "address": 43,
+      "instruction": "0xA011",
+      "mnemonic": "AND",
+      "operand": 17,
+      "comment": "255 AND 2 = 2"
+    },
+    {
+      "address": 44,
+      "instruction": "0xB012",
+      "mnemonic": "OR",
+      "operand": 18,
+      "comment": "2 OR 3 = 3"
+    },
+    {
+      "address": 45,
+      "instruction": "0xC017",
+      "mnemonic": "XOR",
+      "operand": 23,
+      "comment": "3 XOR 2 = 1"
+    },
+    {
+      "address": 46,
+      "instruction": "0x201B",
+      "mnemonic": "STORE",
+      "operand": 27,
+      "comment": "Guardar 1 en memoria[27]"
+    },
+    {
+      "address": 47,
+      "instruction": "0xF000",
+      "mnemonic": "HALT",
+      "operand": 0,
+      "comment": "Terminar ejecución"
+    }
+  ],
+
+  "data_section": {
+    "variables": {
+      "counter": {"address": 16, "value": 0},
+      "value_2": {"address": 17, "value": 0},
+      "value_3": {"address": 18, "value": 0},
+      "accumulator": {"address": 19, "value": 0},
+      "calc_result": {"address": 20, "value": 0},
+      "logic_result": {"address": 21, "value": 0},
+      "sum_chain": {"address": 22, "value": 0},
+      "shift_result": {"address": 23, "value": 0},
+      "unused_24": {"address": 24, "value": 0},
+      "unused_25": {"address": 25, "value": 0},
+      "after_jump": {"address": 26, "value": 0},
+      "final_result": {"address": 27, "value": 0}
+    }
+  },
+
+  "execution_info": {
+    "entry_point": 0,
+    "expected_result": {
+      "memory_values": {
+        "counter": 1,
+        "accumulator": 6,
+        "sum_chain": 11,
+        "final_result": 1,
+        "after_jump": 255
+      },
+      "hi_lo_values": {
+        "after_mult": {"HI": 0, "LO": 12},
+        "after_div": {"HI": 0, "LO": 2}
+      },
+      "flags_at_end": {"Z": 0, "C": 0, "N": 0},
+      "jumps_executed": 1
+    }
+  }
+}
