@@ -1,10 +1,11 @@
 {
   "metadata": {
-    "name": "Programa de Prueba ALU",
+    "name": "Prueba Completa ISA",
     "author": "CPU Simulator",
-    "description": "Prueba de operaciones aritméticas y lógicas",
+    "description": "Prueba completa de todas las instrucciones del ISA estandarizado",
     "created": "2024-12-06",
-    "format_version": "1.0"
+    "format_version": "2.0",
+    "isa_version": "1.0"
   },
 
   "program": [
@@ -13,14 +14,14 @@
       "instruction": "0x9005",
       "mnemonic": "LOADI",
       "operand": 5,
-      "comment": "Cargar 5 en AC"
+      "comment": "Cargar 5 en AC (LOADI 0x9)"
     },
     {
       "address": 1,
       "instruction": "0x2010",
       "mnemonic": "STORE",
       "operand": 16,
-      "comment": "Guardar AC en dirección 16"
+      "comment": "Guardar AC en dirección 0x010 (STORE 0x2)"
     },
     {
       "address": 2,
@@ -34,48 +35,60 @@
       "instruction": "0x3010",
       "mnemonic": "ADD",
       "operand": 16,
-      "comment": "Sumar AC + memoria[16] (5+3=8)"
+      "comment": "AC + memoria[16] = 3+5=8 (ADD 0x3)"
     },
     {
       "address": 4,
       "instruction": "0x2011",
       "mnemonic": "STORE",
       "operand": 17,
-      "comment": "Guardar resultado en dirección 17"
+      "comment": "Guardar resultado 8 en dirección 17"
     },
     {
       "address": 5,
-      "instruction": "0xA010",
-      "mnemonic": "AND",
-      "operand": 16,
-      "comment": "AND entre AC y memoria[16]"
+      "instruction": "0x4011",
+      "mnemonic": "SUB",
+      "operand": 17,
+      "comment": "AC - memoria[17] = 8-8=0 (SUB 0x4)"
     },
     {
       "address": 6,
-      "instruction": "0xD001",
-      "mnemonic": "SLL",
-      "operand": 1,
-      "comment": "Shift Left Logical 1 posición"
+      "instruction": "0xA010",
+      "mnemonic": "AND",
+      "operand": 16,
+      "comment": "AC AND memoria[16] = 0 AND 5 = 0 (AND 0xA)"
     },
     {
       "address": 7,
+      "instruction": "0xD001",
+      "mnemonic": "SHL",
+      "operand": 1,
+      "comment": "Shift Left 1 posición (SHL 0xD)"
+    },
+    {
+      "address": 8,
       "instruction": "0xF000",
       "mnemonic": "HALT",
       "operand": 0,
-      "comment": "Detener CPU"
+      "comment": "Detener CPU (HALT 0xF)"
     }
   ],
   
   "data_section": {
     "variables": {
-      "valor1": {"address": 16, "value": 0},
-      "resultado": {"address": 17, "value": 0}
+      "valor1": {"address": 16, "value": 0, "description": "Almacena el valor 5"},
+      "resultado": {"address": 17, "value": 0, "description": "Almacena resultado de operaciones"}
     }
   },
   
   "execution_info": {
     "entry_point": 0,
     "stack_pointer": 4080,
-    "interrupts_enabled": false
+    "expected_result": {
+      "AC": 0,
+      "flags": {"Z": 1, "C": 0, "N": 0},
+      "memory_16": 5,
+      "memory_17": 8
+    }
   }
 }

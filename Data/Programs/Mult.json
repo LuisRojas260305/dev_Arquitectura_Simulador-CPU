@@ -1,0 +1,96 @@
+{
+  "metadata": {
+    "name": "Prueba Multiplicación",
+    "author": "CPU Simulator",
+    "description": "Multiplicación de 6 × 7 = 42 usando ISA estandarizado",
+    "created": "2025-12-10",
+    "format_version": "2.0",
+    "isa_version": "1.0"
+  },
+
+  "program": [
+    {
+      "address": 0,
+      "instruction": "0x9006",
+      "mnemonic": "LOADI",
+      "operand": 6,
+      "comment": "Cargar 6 en AC (operando A)"
+    },
+    {
+      "address": 1,
+      "instruction": "0x2010",
+      "mnemonic": "STORE",
+      "operand": 16,
+      "comment": "Guardar operando A en memoria[16]"
+    },
+    {
+      "address": 2,
+      "instruction": "0x9007",
+      "mnemonic": "LOADI",
+      "operand": 7,
+      "comment": "Cargar 7 en AC (operando B)"
+    },
+    {
+      "address": 3,
+      "instruction": "0x2011",
+      "mnemonic": "STORE",
+      "operand": 17,
+      "comment": "Guardar operando B en memoria[17]"
+    },
+    {
+      "address": 4,
+      "instruction": "0x1010",
+      "mnemonic": "LOAD",
+      "operand": 16,
+      "comment": "Cargar operando A a AC (LOAD 0x1)"
+    },
+    {
+      "address": 5,
+      "instruction": "0x5011",
+      "mnemonic": "MULT",
+      "operand": 17,
+      "comment": "Multiplicar AC × memoria[17] (MULT 0x5)"
+    },
+    {
+      "address": 6,
+      "instruction": "0x2012",
+      "mnemonic": "STORE",
+      "operand": 18,
+      "comment": "Guardar LO (parte baja) en memoria[18]"
+    },
+    {
+      "address": 7,
+      "instruction": "0x2013",
+      "mnemonic": "STORE",
+      "operand": 19,
+      "comment": "Guardar HI (parte alta) en memoria[19]"
+    },
+    {
+      "address": 8,
+      "instruction": "0xF000",
+      "mnemonic": "HALT",
+      "operand": 0,
+      "comment": "Terminar ejecución"
+    }
+  ],
+
+  "data_section": {
+    "variables": {
+      "opA": {"address": 16, "value": 0, "description": "Operando A (6)"},
+      "opB": {"address": 17, "value": 0, "description": "Operando B (7)"},
+      "result_LO": {"address": 18, "value": 0, "description": "Parte baja del resultado (42)"},
+      "result_HI": {"address": 19, "value": 0, "description": "Parte alta del resultado (0)"}
+    }
+  },
+
+  "execution_info": {
+    "entry_point": 0,
+    "expected_result": {
+      "HI": 0,
+      "LO": 42,
+      "memory_18": 42,
+      "memory_19": 0,
+      "flags": {"Z": 0, "C": 0, "N": 0}
+    }
+  }
+}

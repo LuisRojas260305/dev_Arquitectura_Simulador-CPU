@@ -1,0 +1,96 @@
+{
+  "metadata": {
+    "name": "Prueba División",
+    "author": "CPU Simulator",
+    "description": "División de 84 ÷ 7 = 12 con resto 0 usando ISA estandarizado",
+    "created": "2025-12-10",
+    "format_version": "2.0",
+    "isa_version": "1.0"
+  },
+
+  "program": [
+    {
+      "address": 0,
+      "instruction": "0x9000",
+      "mnemonic": "LOADI",
+      "operand": 84,
+      "comment": "Cargar 84 en AC (dividendo)"
+    },
+    {
+      "address": 1,
+      "instruction": "0x2014",
+      "mnemonic": "STORE",
+      "operand": 20,
+      "comment": "Guardar dividendo en memoria[20]"
+    },
+    {
+      "address": 2,
+      "instruction": "0x9007",
+      "mnemonic": "LOADI",
+      "operand": 7,
+      "comment": "Cargar 7 en AC (divisor)"
+    },
+    {
+      "address": 3,
+      "instruction": "0x2015",
+      "mnemonic": "STORE",
+      "operand": 21,
+      "comment": "Guardar divisor en memoria[21]"
+    },
+    {
+      "address": 4,
+      "instruction": "0x1014",
+      "mnemonic": "LOAD",
+      "operand": 20,
+      "comment": "Cargar dividendo a AC (LOAD 0x1)"
+    },
+    {
+      "address": 5,
+      "instruction": "0x6015",
+      "mnemonic": "DIV",
+      "operand": 21,
+      "comment": "Dividir AC entre memoria[21] (DIV 0x6)"
+    },
+    {
+      "address": 6,
+      "instruction": "0x2016",
+      "mnemonic": "STORE",
+      "operand": 22,
+      "comment": "Guardar cociente (LO) en memoria[22]"
+    },
+    {
+      "address": 7,
+      "instruction": "0x2017",
+      "mnemonic": "STORE",
+      "operand": 23,
+      "comment": "Guardar resto (HI) en memoria[23]"
+    },
+    {
+      "address": 8,
+      "instruction": "0xF000",
+      "mnemonic": "HALT",
+      "operand": 0,
+      "comment": "Terminar ejecución"
+    }
+  ],
+
+  "data_section": {
+    "variables": {
+      "dividendo": {"address": 20, "value": 0, "description": "Dividendo (84)"},
+      "divisor": {"address": 21, "value": 0, "description": "Divisor (7)"},
+      "cociente": {"address": 22, "value": 0, "description": "Cociente esperado (12)"},
+      "resto": {"address": 23, "value": 0, "description": "Resto esperado (0)"}
+    }
+  },
+
+  "execution_info": {
+    "entry_point": 0,
+    "expected_result": {
+      "LO": 12,
+      "HI": 0,
+      "memory_22": 12,
+      "memory_23": 0,
+      "flags": {"Z": 0, "C": 0, "N": 0}
+    }
+  }
+}
