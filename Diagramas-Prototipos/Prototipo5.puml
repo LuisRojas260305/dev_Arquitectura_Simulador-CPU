@@ -1,206 +1,579 @@
 @startuml Simulador_ALU_Arquitectura
 title: Arquitectura del Simulador Digital (ALU Detallada - v3 con Control)
-
-' =================================================================
-' 2. Clase Principal ALU (Orquestador)
-' =================================================================
-package "Unidad Aritmetico/Logica" {
-    class Multiplexor {
-        - Entradas : Bus[] (UA, UL, UD)
-        - Linea_Seleccion : Bit[2] (ALUop)
-        - Salida : Bus
-        --
-        + SeleccionarYPasar()
-    }
-
-    class ALU {
-        ' Conexiones de la CPU
-        - Bus_A : Bus
-        - Bus_B : Bus
-        - Bus_R : Bus
-        - flag_C : Bit
-        - **ALUop : Bit[2]**
-        - **ModoFunción : Bit[2]**
-
-        ' Componentes internos
-        - UnidadAritmetica : UnidadAritmetica
-        - UnidadLogica : UnidadLogica
-        - UnidadDesplazamiento : UnidadDesplazamiento
-        - Multiplexor : Multiplexor
-        --
-        + Ejecutar() : {Bus, Bit}
-        - ActualizarBanderas(resultado : Bus)
-    }
-
-    package "Unidad de Desplazamiento" {
-        class UnidadDesplazamiento {
-            - LSL : LSL
-            - LSR : LSR
-            - ASR : ASR
-            - ROL : ROL
-            - ROR : ROR
-            - MUX_Interno : MUX_nx1
-            --
-            + Calcular(**ModoFuncion : Bit[2]**) : Bus
-        }
-        class LSL
-        class LSR
-        class ASR
-        class ROL
-        class ROR
-    }
-
-    class UnidadLogica {
-        - CircuitosAND : PuertaAND[16]
-        - CircuitosOR : PuertaOR[16]
-        - CircuitosXOR : PuertaXOR[16]
-        --
-        + Calcular(Bus A, Bus B, **ModoFuncion : Bit[2]**) : Bus
-    }
-
-    class FullAdder {
-        - Puertas : PuertaLogica[]
-        - Entrada_A, Entrada_B, C_in : Bit
-        - Suma, C_out : Bit
-        --
-        + Calcular()
-    }
-
-    class UnidadAritmetica {
-        - FAs : FullAdder[16]
-        - Inversores_B : PuertaNOT[16]
-        - **Control_C_in : Bit**
-        --
-        + Calcular(Bus A, Bus B, **C_in : Bit**) : {Bus, Bit}
-    }
-}
-
-' Relación de composición dentro de la Unidad de Desplazamiento
-UnidadDesplazamiento "1" *-- "1" LSL : usa
-UnidadDesplazamiento "1" *-- "1" LSR : usa
-UnidadDesplazamiento "1" *-- "1" ASR : usa
-UnidadDesplazamiento "1" *-- "1" ROL : usa
-UnidadDesplazamiento "1" *-- "1" ROR : usa
-
-' Relación de composición: La UnidadAritmetica contiene los Full Adders
-UnidadAritmetica "1" *-- "16" FullAdder : contiene
-
-' Relaciones de Composición de la ALU
-ALU "1" *-- "1" UnidadAritmetica : contiene
-ALU "1" *-- "1" UnidadLogica : contiene
-ALU "1" *-- "1" Multiplexor : selecciona
-ALU "1" *-- "1" UnidadDesplazamiento : contiene
-
-' **RELACIONES DE CONTROL (¡NUEVAS!)**
-ALU .right.> Multiplexor : (ALUop) Línea_Selección
-ALU .down.> UnidadAritmetica : (ModoFuncion[0]) C_in (Resta/Suma)
-ALU .down.> UnidadLogica : (ModoFuncion) Operación
-ALU .down.> UnidadDesplazamiento : (ModoFuncion) Operación
-
-' =================================================================
-' 3. Módulos Principales del Computador
-' =================================================================
-package "Componentes CPU"{
-    class UnidadControl {
-        - Instruccion : Bus (Opcode de 4 bits + Operando de 12 bits)
-        --
-        + Decodificar(opcode : Bus)
-        + Generar_Senales() : **{ALUop, ModoFunción, ...}**
-        + Secuenciar_Ciclo()
-    }
-    package "Banco de Registros" {
-        class RegistrosInternos {
-            - R0..R7 : RegistroGenerico[8]
-            - AC : RegistroGenerico
-            - PC : RegistroGenerico
-            - IR : RegistroGenerico
-            - Banderas : RegistroEstado
-        }
-
-        class RegistroEstado {
-            - FLAG_Z : Bit
-            - FLAG_C : Bit
-            - FLAG_N : Bit
-        }
-    }
-}
-
-class CPU {
-    - BancoReg : Registros
-    - UC : UnidadDeControl
-    - alu : ALU
-    --
-    + Iniciar()
-    - Fetch()
-    - Decode()
-    - Execute()
-    - WriteBack()
-}
-
-class RAM {
-- Memory : Bus[]
-- Current_access : Bus
---
-+ Read(addres : Bus) : Bus
-+ Write(addres : Bus, value : Bus)
-- Load()
-}
-
-' La CPU contiene e interactúa con el Banco de Registros completo
-CPU "1" *-left- "1" "Banco de Registros" : usa_almacenamiento 
-
-' La CPU utiliza la Lógica Aritmética
-CPU "1" *-down- "1" "Unidad Aritmetico/Logica" : usa_funcionalidad
-
-' La CPU contiene la Unidad de Control
-CPU "1" *-left- "1" UnidadControl : orquesta
-
-' **RELACIÓN DE CONTROL PRINCIPAL (¡NUEVA!)**
-UnidadControl .down.> ALU : Genera_Senales(ALUop, ModoFuncion)
-
-' CPU depende de RAM
-CPU -right-> RAM : lee_escribe
-
 ' =================================================================
 ' 1. Componentes de Bajo Nivel (Datos y Lógica Fundamental)
 ' =================================================================
 package "Componentes Basicos" {
     class Bit {
-        - valor : int (0 o 1)
+        - value : int (0 o 1)
         --
-        + set_value(v)
+        + set_value(value)
         + get_value() : int
+        - str()
+        + toggle()
+        - repr()
+        - eq()
     }
 
     class Bus {
-        - lineas : Bit[16]
-        - ancho : int (16)
+        - width : int
+        - initial_value: int
+        - DEFAULT_WIDTH: ClassVar[int]
+        - MAX_WIDTH: ClassVar[int]
         --
-        + get_valor_decimal() : int
-        + set_valor_binario(valor : int)
+        + set_Binary_value(value: int)
+        + set_Line_bit(index: int, value: Bit)
+        + get_Decimal_value(): int
+        + get_Binary_value(): int
+        + get_Hexadecimal_value(): str
+        + get_Lines_values(): Dict[int, int]
+        + get_Ordered_lines_values(): Dict[int, int]
+        + get_Line_bit(index: int): Bit
+        - str()
+        - len()
     }
 
-    abstract class PuertaLogica {
-        - Entrada_A : Bit
-        - Entrada_B : Bit
-        - Salida : Bit
+    abstract class Logic_Gate {
+        - inputs
+        - output
+        - n_inputs
         --
-        + Calcular()
+        # connect_input(index: int)
+        # calculate
+        - str()
     }
 
-    class RegistroGenerico {
-        - Valor : Bus
+    class MUX3to1 {
+        - Input_A: Bit
+        - Input_B: Bit
+        - Input_C: Bit
+        - Input_S: Bus
+        - Output: Bit
+        - Not_S0: NOT_Gate
+        - Not_S1: NOT_Gate
+        - And_A1: AND_Gate
+        - And_A2: AND_Gate
+        - And_B1: AND_Gate
+        - And_B2: AND_Gate
+        - And_C1: AND_Gate
+        - And_C2: AND_Gate
+        - Or1: OR_Gate
+        - Or2: OR_Gate
         --
-        + Cargar(Bus)
-        + Leer() : Bus
+        + Calculate()
+    }
+
+    class MUX4to1 {
+        - Input_D0: Bit
+        - Input_D1: Bit
+        - Input_D2: Bit
+        - Input_D3: Bit
+        - Input_S: Bus
+        - Output: Bit
+        - Not_S0: NOT_Gate
+        - Not_S1: NOT_Gate
+        - And_D0_1: AND_Gate
+        - And_D0_2: AND_Gate
+        - And_D1_1: AND_Gate
+        - And_D1_2: AND_Gate
+        - And_D2_1: AND_Gate
+        - And_D2_2: AND_Gate
+        - And_D3_1: AND_Gate
+        - And_D3_2: AND_Gate
+        - Or1: OR_Gate
+        - Or2: OR_Gate
+        - Or3: OR_Gate
+        --
+        + Calculate()
+    }
+
+    class MUX2to1 {
+        - Input_A: Bit
+        - Input_B: Bit
+        - Input_S: Bus
+        - Output: Bit
+        - Not: NOT_Gate
+        - And_A: AND_Gate
+        - And_B: AND_Gate
+        - Or: OR_Gate
+        --
+        + Calculate()
+    }
+
+    class MUX8to1 {
+        - Input: Bus
+        - S: Bus
+        - Output: Bit
+        - Not_S0: NOT_Gate
+        - Not_S1: NOT_Gate
+        - Not_S2: NOT_Gate
+        - And_Gate: AND_Gate_4[8]
+        - Or_Gate: OR_Gate_8
+        --
+        + Calculate()
+    }
+
+    class Record {
+        - width: int
+        - Value: Bus
     }
 
     ' Clases concretas de puertas lógicas
-    PuertaLogica <|-right- PuertaAND
-    PuertaLogica <|-- PuertaOR
-    PuertaLogica <|-- PuertaXOR
-    PuertaLogica <|-left- PuertaNOT
+    Logic_Gate <|-- AND_Gate_4
+    Logic_Gate <|-- AND_Gate
+    Logic_Gate <|-- NOT_Gate
+    Logic_Gate <|-- OR_Gate_8
+    Logic_Gate <|-- OR_Gate
+    Logic_Gate <|-- XOR_Gate
+}
+' =================================================================
+' 2.- ALU
+' =================================================================
 
+package "ALU"{
+    package "Arithmetic Unit"{
+        class Full_Adder{
+            - Input_A: Bit
+            - Input_B: Bit
+            - C_in: Bit
+            - Output: Bit
+            - C_out: Bit
+            - Xor_A: XOR_Gate
+            - Xor_B: XOR_Gate
+            - And_A: AND_Gate
+            - And_B: AND_Gate
+            - Or: OR_Gate
+            --
+            + calculate()
+        }
+
+        class Arithmetic_Unit{
+            - FAs: Full_Adder[16]
+            - Inverters: XOR_Gate[16]
+            - Control_SUB: Bit
+            --
+            - invert_bus(input_bus: Bus, invert_control: Bit): Bus
+            - add(input_a: Bus, input_b: Bus, c_in: Bit): Tuple[Bus, Bit]
+            - calculate(input_a: Bus, input_b: Bus, c_in: Bit): Tuple[Bus, Bit]
+        }
+    }
+    package "Logical Unit"{
+        class Logical_Mux{
+            - Input_AND: Bus
+            - Input_OR: Bus
+            - Input_XOR: Bus
+            - Input_NOT: Bus
+            - Input_Select: Bus
+            - Output: Bus
+            - MUX_array: MUX4to1[16]
+            --
+            + calculae: Bus
+        }
+
+        class Logical_Unit{
+            - AND_Gates: AND_Gate[16]
+            - OR_Gate: OR_Gate[16]
+            - XOR_Gate: XOR_Gate[16]
+            - NOT_Gate: NOT_Gate[16]
+            
+            - AND_Output: Bus
+            - OR_Output: Bus
+            - XOR_Output: Bus
+            - NOT_Output: Bus
+            
+            - Output: Bus
+
+            - Input_A: Bus
+            - Input_B: Bus
+            - Mode: Bus
+
+            - MUX: Logical_Mux
+        }
+    }
+
+    package "Shitf Unit"{
+        package "Barrel Shifter"{
+            class ASR{
+                - 1bit__stage: MUX2to1[16]
+                - 2bit__stage: MUX2to1[16]
+                - 4bit__stage: MUX2to1[16]
+                - 8bit__stage: MUX2to1[16]
+                - Input_A: Bus
+                - Input_B: Bus
+                - Stage_0: Bus
+                - Stage_1: Bus
+                - Stage_2: Bus
+                - Stage_3: Bus
+                --
+                - Calculate_Stage_0(input: Bus, S_in: Bit): Bus
+                - Calculate_Stage_1(input: Bus, S_in: Bit): Bus
+                - Calculate_Stage_2(input: Bus, S_in: Bit): Bus
+                - Calculate_Stage_3(input: Bus, S_in: Bit): Bus
+                - Calculate(): Bus
+            }
+
+            class LSL{
+                - 1bit__stage: MUX2to1[16]
+                - 2bit__stage: MUX2to1[16]
+                - 4bit__stage: MUX2to1[16]
+                - 8bit__stage: MUX2to1[16]
+                - Input_A: Bus
+                - Input_B: Bus
+                - Stage_0: Bus
+                - Stage_1: Bus
+                - Stage_2: Bus
+                - Stage_3: Bus
+                --
+                - Calculate_Stage_0(input: Bus, S_in: Bit): Bus
+                - Calculate_Stage_1(input: Bus, S_in: Bit): Bus
+                - Calculate_Stage_2(input: Bus, S_in: Bit): Bus
+                - Calculate_Stage_3(input: Bus, S_in: Bit): Bus
+                - Calculate(): Bus
+            }
+
+            class LSR{
+                - 1bit__stage: MUX2to1[16]
+                - 2bit__stage: MUX2to1[16]
+                - 4bit__stage: MUX2to1[16]
+                - 8bit__stage: MUX2to1[16]
+                - Input_A: Bus
+                - Input_B: Bus
+                - Stage_0: Bus
+                - Stage_1: Bus
+                - Stage_2: Bus
+                - Stage_3: Bus
+                --
+                - Calculate_Stage_0(input: Bus, S_in: Bit): Bus
+                - Calculate_Stage_1(input: Bus, S_in: Bit): Bus
+                - Calculate_Stage_2(input: Bus, S_in: Bit): Bus
+                - Calculate_Stage_3(input: Bus, S_in: Bit): Bus
+                - Calculate(): Bus
+            }
+
+            class ROL{
+                - 1bit__stage: MUX2to1[16]
+                - 2bit__stage: MUX2to1[16]
+                - 4bit__stage: MUX2to1[16]
+                - 8bit__stage: MUX2to1[16]
+                - Input_A: Bus
+                - Input_B: Bus
+                - Stage_0: Bus
+                - Stage_1: Bus
+                - Stage_2: Bus
+                - Stage_3: Bus
+                --
+                - Calculate_Stage_0(input: Bus, S_in: Bit): Bus
+                - Calculate_Stage_1(input: Bus, S_in: Bit): Bus
+                - Calculate_Stage_2(input: Bus, S_in: Bit): Bus
+                - Calculate_Stage_3(input: Bus, S_in: Bit): Bus
+                - Calculate(): Bus
+            }
+
+            class ROR{
+                - 1bit__stage: MUX2to1[16]
+                - 2bit__stage: MUX2to1[16]
+                - 4bit__stage: MUX2to1[16]
+                - 8bit__stage: MUX2to1[16]
+                - Input_A: Bus
+                - Input_B: Bus
+                - Stage_0: Bus
+                - Stage_1: Bus
+                - Stage_2: Bus
+                - Stage_3: Bus
+                --
+                - Calculate_Stage_0(input: Bus, S_in: Bit): Bus
+                - Calculate_Stage_1(input: Bus, S_in: Bit): Bus
+                - Calculate_Stage_2(input: Bus, S_in: Bit): Bus
+                - Calculate_Stage_3(input: Bus, S_in: Bit): Bus
+                - Calculate(): Bus
+            }
+        }
+
+        class Multiplex{
+            - Input_ASR: Bus
+            - Input_LSL: Bus
+            - Input_LSR: Bus
+            - Input_ROL: Bus
+            - Input_ROR: Bus
+            - Input_Select: Bus
+            - Input_Output: Bus
+            - MUX: MUX8to1[16]
+            --
+            + Calculate()
+        }
+
+        class Shitf_Unit{
+            - Input_A: Bus
+            - Input_B: Bus
+            - Operation_Bus: Bus
+            - ASR: ASR
+            - LSL: LSL
+            - LSR: LSR
+            - ROL: ROL
+            - ROR: ROR
+            - Multiplex: Multiplex
+            - ASR_Output: Bus
+            - LSL_Output: Bus
+            - LSR_Output: Bus
+            - ROL_Output: Bus
+            - ROR_Output: Bus
+            - Output: Bus
+            --
+            + calculate: Bus
+        }
+    }
+
+    class ALU_MUX{
+        - Input_Aritmetica: Bus
+        - Input_Logica: Bus
+        - Input_Desplazamiento: Bus
+        - Input_Select: Bus
+        - Output: Bus
+        - MUX_array: MUX3to1[16]
+        --
+        + calculate()
+    }
+
+    class ALU{
+        - arithmetic_unit: Arithmetic_Unit
+        - logical_unit: Logical_Unit
+        - Shitf_Unit: Shitf_Unit
+        - output_mux: ALU_MUX
+        - input_a: Bus
+        - input_b: Bus
+        - aluop: Bus
+        - modo_funcion: Bus
+        - output: Bus
+        - carry_out: Bit
+        - zero_flag: Bit
+        - negative_flag: Bit
+        - arith_result: Bus
+        - logic_result: Bus
+        - shift_result: Bus
+        --
+        + execute(): Bus
+        - update_flags()
+        + execute_with_signals(a: int, b: int, aluop: int, modo_funcion: int): int 
+    }
+
+    ALU <-- "Arithmetic Unit"
+    ALU <-- "Logical Unit"
+    ALU <-- "Shitf Unit"
+}
+' =================================================================
+' 3.- Unidad de control
+' =================================================================
+package "Control Unit"{
+    class ControlStore{
+        + SIGNAL_BITS
+        - memory: Bus
+        --
+        - initialize_microcode()
+        # calculate_address(opcode: int, step: int): int
+        # generate_microinstrution(opcode: int, step: int): Bus
+        # generate_execution_microcode(control_word: Bus, opcode: int, step: int)
+        # set_signal(control_word: Bus, signal_name: str, value: int)
+        + read(address: int): Bus
+        + read_by_opcode_step(opcode: int, step: int): Bus
+        + save_to_file(filename: str)
+        + load_from_file(filename: str)
+        + get_word_hex(address: int): str
+        + get_word_bin(address: int): str
+        + dump_memory(star_addr: int, end_addr: int)
+    }
+
+    class Decoder{
+        - Input: Bus
+        - Output: Bus
+        - NOT_Gates: NOT_Gate[4]
+        - AND_Gates: AND_Gate_4[16]
+        - Inverted_Bits
+        --
+        + set_instruction(intruction_bus: Bus)
+        + reset()
+        + decode(Input: Bus)
+    }
+
+    class FSM{
+        - state_bits: Bit
+        - start_mult: Bit
+        - start_div: Bit
+        - md_done: Bit
+        - div_zero: Bit
+        - reset: Bit
+        - md_start: Bit
+        - md_shift: Bit
+        - md_add: Bit
+        - md_sub: Bit
+        - md_error: Bit
+        - busy: Bit
+        - AND_Gates
+        - OR_Gates
+        - NOT_Gates
+        --
+        + reset()
+        + update_state()
+        - get_state_value(): int
+        - set_state_value(value: int)
+        - update_outputs():
+    }
+
+    class MicroCounter{
+        - value: Record
+        - reset_signal: Bit
+        - increment_signal: Bit
+        - load_signal: Bit
+        - load_data: Bus
+        - clock_state: Bit
+        --
+        + clock_tick()
+        - update_value()
+        + reset()
+        + increment()
+        + load(value: int)
+    }
+
+    class Record_Bank{
+        - PC: Record
+        - IR: Record
+        - AC: Record
+        - MAR: Record
+        - MDR: Record
+        - TEMP: Record
+        
+        - HI: Record
+        - LO: Record
+        - MD_CNT: Record
+        - MD_STATE: Record
+        
+        - STEP_CNT: Record
+        - OP_TYPE: Record
+        - STATUS: Record
+        
+        - FLAG_Z: Bit
+        - FLAG_C: Bit
+        - FLAG_N: Bit
+    }
+
+    class SignalGenerator{
+        - signals
+        - bit_to_signal
+        - signal_to_bit
+        --
+        + generate(control_word: Bus)
+    }
+
+    class Control_Unit{
+        + control_store: ControlStore
+        + signal_generator: SignalGenerator
+        + micro_counter: MicroCounter
+        + fsm: FSM
+        + decoder: Decoder
+        + current_instruction: Bus
+        + current_opcode
+        + current_step
+        + halted: Bit
+        + control_signals
+        + cycles_executed
+        --
+        + reset()
+        + load_instruction(instruction_bus: Bus)
+        + execute_cycle()
+    }
+}
+' =================================================================
+' 4.- CPU
+' =================================================================
+class CPU{
+    + bus: SystemBus
+    + registers: Record_Bank
+    + alu: ALU
+    + control_unit: Control_Unit
+    + running: Bit
+    + clock_cycle: int
+    + instructions_executed: int
+    + memory: RAM
+    --
+    + connect_memory(memory: RAM)
+    + reset()
+    + fetch()
+    + execute()
+    # load_instruction(address)
+    # store_instruction(address)
+    # add_instruction(address)
+    # execute_multiplication(operand)
+    # execute_division(divisor)
+    + run_cycle()
+    + run_program(start_address: int, max_cycles: int)
+}
+' =================================================================
+' 5.- MEMORYS
+' =================================================================
+package "Memory"{
+    class RAM{
+        + size
+        + memory: List(Bus)
+        + read_enable: Bit
+        + write_enable: Bit
+        + read_count: int
+        + write_count: int
+        --
+        + load_from_json(json_file: str)
+        + read(address: int): Bus
+        + write(address: int, data: Bus)
+        + read_direct(address: int): Bus
+        + write_direct(address: int, value: int)
+        + dump(start_addr: int, count: int)
+    }
+
+    class ROM{
+        + config
+        + assembler
+        + base_path
+        + test_history: List[Dict]
+        + loaded_configs: List[Dict]
+        --
+        # create_directories()
+        # get_system_class()
+        + create_system_assembler(system_config: Dict)
+        + list_programs(): List[Dict[str, Any]]
+        + load_program(program_filename: str, verbose: bool): bool
+        + run_system_test(): Dict[str, Any]
+        + load_configuration(config_filename: str): Dict
+        + save_configuration(config: Dict, config_filename: str)
+        + run_program(mode: str, steps: int, max_cycles: int): bool
+        + assemble_system(config: Dict, verbose: bool): bool
+    }
+
+    class SystemBus{
+        + data_bus: Bus
+        + address_bus: Bus
+        + control_bus: Bus
+        + devices
+        + bus_request: Bit
+        + bus_grant: Bit
+        + current_master
+        + clock_cycles: int
+        --
+        + connect_device(device, name: str, address_range: tuple, device_type: str)
+        + find_device(address: int)
+        + read(address: int, master_name: str): Bus
+        + write(address: int, data: Bus, master_name: str)
+        # request_bus(master_name: str): bool
+        # release_bus(master_name: str)
+        + reset()
+    }
+}
+' =================================================================
+' 6.- Computer System
+' =================================================================
+class System{
+    --
+    + assemble(verbose: bool): bool
+    # log_step(message: str, success: bool)
+    + reset_all_components()
+    + load_program_from_json(json_path: str, verbose: bool): bool
+    + run_program(mode: str, steps: int, max_cycles: int): bool
 }
 
 @enduml

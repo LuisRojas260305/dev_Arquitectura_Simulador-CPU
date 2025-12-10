@@ -76,35 +76,3 @@ class Arithmetic_Unit:
             # Invertir B y sumar 1 (c_in = 1)
             inverted_b = self.__invert_bus(input_b, Bit(1))
             return self.__add(input_a, inverted_b, Bit(1))
-    
-    def get_result(self) -> Bus:
-        """Método auxiliar para compatibilidad."""
-        # Nota: Este método sería útil si guardas el resultado como atributo
-        pass
-        
-        width = len(Input_A) 
-        result = Bus(width)
-
-        Carry = C_in
-
-        for i in range(width - 1, -1, -1):
-
-            # Recogemos los bits a sumar
-            A = Input_A.get_Line_bit(i)
-            B = Input_B.get_Line_bit(i)
-
-            # Ingresamos los valores en el adder
-            self.__FAs[i].set_Input_A(A)
-            self.__FAs[i].set_Input_B(B)
-            self.__FAs[i].set_C_in(Carry)
-
-            # Realizamos la suma
-            self.__FAs[i].Calculate()
-
-            # Guardamos el Carry
-            Carry = self.__FAs[i].get_C_out()
-
-            # Guardamos el resultado de la suma
-            result.set_Line_bit(i, self.__FAs[i].get_Output())
-
-        return result, Carry
